@@ -141,4 +141,4 @@ MIT / BSD
 
 ## Author Information
 
-This Docker Compose Traefik was created in 2022 by [Asapdotid](https://github.com/asapdotid).
+This Docker Compose Traefik was created in 2022 by [Asapdotid](https://github.com/asapdotid) for [Wilopo Crago](https://wilopocargo.com/)
