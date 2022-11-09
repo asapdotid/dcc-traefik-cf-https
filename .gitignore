@@ -1,0 +1,5 @@
+.env
+data/*
+!data/.keepfile
+portainer-data/*
+!portainer-data/.keepfile
