@@ -10,9 +10,9 @@ This guide shows you how to deploy your containers behind Traefik reverse-proxy.
 
 ### Step 1: Make Sure You Have Required Dependencies
 
-- Git
-- Docker
-- Docker Compose
+-   Git
+-   Docker
+-   Docker Compose
 
 #### Example Installation on Debian-based Systems:
 
@@ -26,6 +26,13 @@ sudo apt install git docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 ```bash
 git clone https://github.com/asapdotid/dcc-traefik.git
+cd dcc-traefik
+```
+
+or
+
+```bash
+git clone git@github.com:wilopo-cargo/dcc-traefik.git
 cd dcc-traefik
 ```
 
@@ -99,8 +106,8 @@ sudo docker-compose up -d
 
 ### Step 6: Additional Docker Service
 
-- Whoami
-- Portainer
+-   Whoami
+-   Portainer
 
 Can remove or command.
 
