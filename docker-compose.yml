@@ -51,7 +51,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./data/letsencrypt:/letsencrypt
+      - ./.data/traefik/letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   whoami:
@@ -79,7 +79,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./portainer-data:/data
+      - ./.data/portainer:/data
     labels:
       - traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN}`)
       - traefik.http.routers.portainer.entrypoints=https
