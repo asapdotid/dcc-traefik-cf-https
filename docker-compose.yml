@@ -67,6 +67,8 @@ services:
       - traefik.http.routers.https.entrypoints=https
       - traefik.http.routers.https.tls=true
       - traefik.http.routers.https.tls.certresolver=${CERT_RESOLVER}
+    depends_on:
+      - traefik
 
   portainer:
     image: portainer/portainer-ce:latest
@@ -86,3 +88,5 @@ services:
       - traefik.http.routers.portainer.tls=true
       - traefik.http.routers.portainer.tls.certresolver=${CERT_RESOLVER}
       - traefik.http.services.portainer.loadbalancer.server.port=9000
+    depends_on:
+      - traefik
