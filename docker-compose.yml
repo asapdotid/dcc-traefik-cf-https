@@ -2,6 +2,7 @@ version: "3.7"
 
 networks:
   proxy:
+    driver: bridge
     external: ${DOCKER_EXTRENAL_NETWORK}
 
 services:

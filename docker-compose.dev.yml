@@ -1,0 +1,49 @@
+version: "3"
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:2.9
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./.config/traefik/:/etc/traefik/
+      - ./.data/traefik/ssl:/etc/traefik/ssl
+    labels:
+      - traefik.enable: true
+      - traefik.http.routers.api.rule: Host(`traefik.${TRAEFIK_DOMAIN:?err}`)
+      - traefik.http.routers.api.entryPoints: https
+      - traefik.http.routers.api.service: api@internal
+      - traefik.http.routers.api.middlewares: test-auth@file
+    environment:
+      DOCKER_HOST: dockersocket
+      CF_DNS_API_TOKEN: ${CLOUDFLARE_API_TOKEN:?err}
+    networks:
+      - proxy
+      - secure
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      - dockersocket
+
+  dockersocket:
+    container_name: dockersocket
+    image: tecnativa/docker-socket-proxy:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      CONTAINERS: 1
+      POST: 0
+    privileged: true
+    networks:
+      - secure
+    restart: unless-stopped
+
+networks:
+  proxy:
+    driver: bridge
+    external: ${DOCKER_EXTRENAL_NETWORK}
+  secure:
+    driver: bridge
+    external: ${DOCKER_EXTRENAL_NETWORK}
