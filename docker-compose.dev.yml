@@ -1,49 +1,93 @@
-version: "3"
-services:
-  traefik:
-    container_name: traefik
-    image: traefik:2.9
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ./.config/traefik/:/etc/traefik/
-      - ./.data/traefik/ssl:/etc/traefik/ssl
-    labels:
-      - traefik.enable: true
-      - traefik.http.routers.api.rule: Host(`monitor.${TRAEFIK_DOMAIN:?err}`)
-      - traefik.http.routers.api.entryPoints: https
-      - traefik.http.routers.api.service: api@internal
-      - traefik.http.routers.api.middlewares: test-auth@file
-    environment:
-      DOCKER_HOST: dockersocket
-      CF_DNS_API_TOKEN: ${CLOUDFLARE_API_TOKEN:?err}
-    networks:
-      - proxy
-      - secure
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    depends_on:
-      - dockersocket
-
-  dockersocket:
-    container_name: dockersocket
-    image: tecnativa/docker-socket-proxy:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      CONTAINERS: 1
-      POST: 0
-    privileged: true
-    networks:
-      - secure
-    restart: unless-stopped
+version: "3.7"
 
 networks:
   proxy:
     driver: bridge
     external: ${DOCKER_EXTRENAL_NETWORK}
-  secure:
-    driver: bridge
-    external: ${DOCKER_EXTRENAL_NETWORK}
+
+services:
+  traefik:
+    image: traefik:2.9
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    command:
+      # Try to enable this if something isn't working.
+      # Chances are, Traefik will tell you why.
+      # Be careful in production as it exposes the traffic you might not want to expose.
+      #--log.level=DEBUG
+
+      - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
+
+      - --providers.docker=true
+      - --api=true
+
+      # LetsEncrypt Staging Server - uncomment when testing
+      # - --certificatesResolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory
+
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http
+      - --certificatesresolvers.letsencrypt.acme.email=${EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+    labels:
+      # Redirect all HTTP traffic to HTTPS
+      - traefik.http.routers.to-https.rule=HostRegexp(`{host:.+}`)
+      - traefik.http.routers.to-https.entrypoints=http
+      - traefik.http.routers.to-https.middlewares=to-https
+
+      - traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`)
+      - traefik.http.routers.traefik.entrypoints=https
+      - traefik.http.routers.traefik.middlewares=auth
+      - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.routers.traefik.tls=true
+      - traefik.http.routers.traefik.tls.certresolver=${CERT_RESOLVER}
+
+      - traefik.http.middlewares.to-https.redirectscheme.scheme=https
+      - traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_USER}:${TRAEFIK_PASSWORD_HASH}
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./.data/traefik/letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  whoami:
+    image: containous/whoami
+    container_name: whoami
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    labels:
+      - traefik.http.routers.https.rule=Host(`whoami.${DOMAIN}`)
+      - traefik.http.routers.https.entrypoints=https
+      - traefik.http.routers.https.tls=true
+      - traefik.http.routers.https.tls.certresolver=${CERT_RESOLVER}
+    depends_on:
+      - traefik
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./.data/portainer:/data
+    labels:
+      - traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN}`)
+      - traefik.http.routers.portainer.entrypoints=https
+      - traefik.http.routers.portainer.tls=true
+      - traefik.http.routers.portainer.tls.certresolver=${CERT_RESOLVER}
+      - traefik.http.services.portainer.loadbalancer.server.port=9000
+    depends_on:
+      - traefik

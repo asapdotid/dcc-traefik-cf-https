@@ -2,17 +2,13 @@ http:
   middlewares:
     auth:
       forwardauth:
-        address: http://auth:9091/api/verify?rd=https://auth.jogjascript.com/
+        address: http://auth:9091/api/verify?rd=https://auth.wilopocargo.com/
         trustForwardHeader: true
         authResponseHeaders:
           - Remote-User
           - Remote-Groups
           - Remote-Name
           - Remote-Email
-    test-auth:
-      basicAuth:
-        users:
-          - "admin:$$2y$$05$$JZ0wsyR0FxsHibkKSkQyie1jD1VZM5xAtHwgMa9QLML6nEjpnzZUO"
 
     securityHeaders:
       headers:

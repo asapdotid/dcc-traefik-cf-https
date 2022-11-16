@@ -6,10 +6,12 @@ serversTransport:
   insecureSkipVerify: true
 
 entryPoints:
+  # Not used in apps, but redirect everything from HTTP to HTTPS
   http:
     address: :80
     forwardedHeaders:
-      trustedIPs: &trustedIps
+      trustedIPs:
+        &trustedIps # Start of Clouflare public IP list for HTTP requests, remove this if you don't use it
         - 173.245.48.0/20
         - 103.21.244.0/22
         - 103.22.200.0/22
@@ -31,43 +33,53 @@ entryPoints:
         - 2405:8100::/32
         - 2a06:98c0::/29
         - 2c0f:f248::/32
+        # End of Cloudlare public IP list
     http:
       redirections:
         entryPoint:
           to: https
           scheme: https
 
+  # HTTPS endpoint, with domain wildcard
   https:
     address: :443
     forwardedHeaders:
+      # Reuse list of Cloudflare Trusted IP's above for HTTPS requests
       trustedIPs: *trustedIps
     http:
       tls:
+        # Generate a wildcard domain certificate
         certResolver: letsencrypt
         domains:
-          - main: jogjascript.com
+          - main: wilopocargo.com
             sans:
-              - "*.jogjascript.com"
+              - "*.wilopocargo.com"
       middlewares:
         - securityHeaders@file
 
 providers:
   providersThrottleDuration: 2s
+
+  # File provider for connecting things that are outside of docker / defining middleware
   file:
-    filename: /etc/traefik/dynamic.yml
+    filename: /etc/traefik/conf/dynamic.yml
     watch: true
+
+  # Docker provider for connecting all apps that are inside of the docker network
   docker:
     watch: true
     network: proxy
-    defaultRule: 'Host(`{{ index .Labels "com.docker.compose.service"}}.jogjascript.com`)'
+    defaultRule: 'Host(`{{ index .Labels "com.docker.compose.service"}}.wilopocargo.com`)'
     swarmModeRefreshSeconds: 15s
     exposedByDefault: false
     endpoint: "tcp://dockersocket:2375"
 
+# Enable traefik ui
 api:
   dashboard: true
   insecure: true
 
+# Log level INFO|DEBUG|ERROR
 log:
   level: INFO
 
