@@ -51,9 +51,9 @@ entryPoints:
         # Generate a wildcard domain certificate
         certResolver: letsencrypt
         domains:
-          - main: wilopocargo.com
+          - main: __DOMAIN_NAME
             sans:
-              - "*.wilopocargo.com"
+              - "*.__DOMAIN_NAME"
       middlewares:
         - securityHeaders@file
 
@@ -68,11 +68,11 @@ providers:
   # Docker provider for connecting all apps that are inside of the docker network
   docker:
     watch: true
-    network: proxy
-    defaultRule: 'Host(`{{ index .Labels "com.docker.compose.service"}}.wilopocargo.com`)'
+    network: __DOCKER_NETWORK
+    # defaultRule: 'Host(`{{ index .Labels "com.docker.compose.service"}}.wilopocargo.com`)'
     swarmModeRefreshSeconds: 15s
     exposedByDefault: false
-    endpoint: "tcp://dockersocket:2375"
+    endpoint: "__DOCKER_ENTRYPOINT"
 
 # Enable traefik ui
 api:
@@ -81,15 +81,19 @@ api:
 
 # Log level INFO|DEBUG|ERROR
 log:
-  level: INFO
+  level: __LOG_LEVEL
+
+accessLog:
+  filePath: "/var/log/traefik/access.log"
 
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: asapdotid@gmail.com
+      email: __ACME_EMAIL_ADDRESS
       storage: /etc/traefik/ssl/acme.json
       dnsChallenge:
-        provider: cloudflare
+        provider: __ACME_DNS_CHALLENGE_PROVIDER
         resolvers:
           - "1.1.1.1:53"
           - "1.0.0.1:53"
+          - "8.8.8.8:53"
