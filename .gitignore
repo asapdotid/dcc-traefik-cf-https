@@ -11,3 +11,5 @@
 !/.data/traefik/.keepfile
 /.data/portainer/*
 !/.data/portainer/.keepfile
+/.logs/traefik/*
+!/.logs/traefik/.keepfile

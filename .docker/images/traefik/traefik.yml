@@ -76,8 +76,8 @@ providers:
 
 # Enable traefik ui
 api:
-  dashboard: true
-  insecure: true
+  dashboard: __TRAEFIK_API_DASHBOARD
+  insecure: __TRAEFIK_API_INSECURE
 
 # Log level INFO|DEBUG|ERROR
 log:
@@ -85,6 +85,9 @@ log:
 
 accessLog:
   filePath: "/var/log/traefik/access.log"
+  fields:
+    names:
+      StartUTC: drop
 
 certificatesResolvers:
   letsencrypt:
@@ -93,6 +96,7 @@ certificatesResolvers:
       storage: /etc/traefik/ssl/acme.json
       dnsChallenge:
         provider: __ACME_DNS_CHALLENGE_PROVIDER
+        delayBeforeCheck: 0
         resolvers:
           - "1.1.1.1:53"
           - "1.0.0.1:53"

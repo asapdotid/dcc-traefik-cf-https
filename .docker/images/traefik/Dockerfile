@@ -1,19 +1,22 @@
 ARG TRAEFIK_VERSION
 FROM traefik:${TRAEFIK_VERSION} as base
 
-RUN apk --no-cache add sed
+RUN apk --no-cache add sed tzdata
 
-ARG CLOUDFLARE_API_TOKEN
-ENV CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+ARG CLOUDFLARE_DNS_API_TOKEN
+ENV CLOUDFLARE_DNS_API_TOKEN=${CLOUDFLARE_DNS_API_TOKEN}
 
 # Timezone
 ARG TIMEZONE
+ENV TZ=${TIMEZONE}
 RUN ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime && echo $TIMEZONE > /etc/timezone
 
 COPY ./images/traefik/traefik.yml /etc/traefik/traefik.yml
 COPY ./images/traefik/conf/dynamic.yml /etc/traefik/conf/dynamic.yml
 
 ARG TRAEFIK_LOG_LEVEL
+ARG TRAEFIK_API_DASHBOARD
+ARG TRAEFIK_API_INSECURE
 ARG TRAEFIK_DOMAIN_NAME
 ARG TRAEFIK_DOCKER_NETWORK
 ARG TRAEFIK_DOCKER_ENTRYPOINT
@@ -22,6 +25,8 @@ ARG TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER
 # Modify traefik config
 RUN sed -i /etc/traefik/traefik.yml \
     -e "s#__LOG_LEVEL#$TRAEFIK_LOG_LEVEL#g" \
+    -e "s#__TRAEFIK_API_DASHBOARD#$TRAEFIK_API_DASHBOARD#g" \
+    -e "s#__TRAEFIK_API_INSECURE#$TRAEFIK_API_INSECURE#g" \
     -e "s#__DOMAIN_NAME#$TRAEFIK_DOMAIN_NAME#g" \
     -e "s#__DOCKER_NETWORK#$TRAEFIK_DOCKER_NETWORK#g" \
     -e "s#__DOCKER_ENTRYPOINT#$TRAEFIK_DOCKER_ENTRYPOINT#g" \

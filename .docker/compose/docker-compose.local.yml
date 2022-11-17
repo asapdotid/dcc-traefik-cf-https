@@ -12,9 +12,7 @@ services:
   traefik:
     volumes:
       - ../../.data/traefik/ssl/:/etc/traefik/ssl/
-      - ../../.logs/traefik:/var/log/traefik
-    # environment:
-    #   - CF_DNS_API_TOKEN=${CLOUDFLARE_API_TOKEN:?err}
+      - ../../.logs/traefik/:/var/log/traefik/
     ports:
       - "${TRAEFIK_HOST_HTTP_PORT:-80}:80"
       - "${TRAEFIK_HOST_HTTPS_PORT:-443}:443"
@@ -52,3 +50,5 @@ services:
       - ../../.logs/traefik:/var/log/traefik
     networks:
       - secure
+    depends_on:
+      - traefik
