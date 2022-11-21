@@ -19,6 +19,8 @@ services:
         - TRAEFIK_ACME_EMAIL_ADDRESS=${TRAEFIK_ACME_EMAIL_ADDRESS?}
         - TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER=${TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER?}
         - CLOUDFLARE_DNS_API_TOKEN=${CLOUDFLARE_DNS_API_TOKEN?}
+        - TRAEFIK_BASIC_AUTH_USERNAME=${TRAEFIK_BASIC_AUTH_USERNAME}
+        - TRAEFIK_BASIC_AUTH_PASSWORD_HASH=${TRAEFIK_BASIC_AUTH_PASSWORD_HASH}
 
   dockersocket:
     image: ${DOCKER_REGISTRY?}/${DOCKER_NAMESPACE?}/docker-socket-proxy-${ENV?}:${TAG?}
@@ -34,6 +36,7 @@ services:
     build:
       context: ../
       dockerfile: ./images/logger/Dockerfile
+      target: ${ENV?}
       args:
         - ALPINE_VERSION=${ALPINE_VERSION?}
-      target: ${ENV?}
+        - TIMEZONE=${TIMEZONE?}

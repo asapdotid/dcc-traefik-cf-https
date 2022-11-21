@@ -4,9 +4,14 @@ FROM alpine:${ALPINE_VERSION} as base
 RUN apk add --update  \
     apk-cron \
     logrotate \
+    tzdata \
     && rm -rf /etc/periodic/* \
     && rm -rf /etc/logrotate.d/* \
     && rm -rf /var/cache/apk/*
+
+# Timezone
+ARG TIMEZONE
+RUN ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime && echo $TIMEZONE > /etc/timezone
 
 COPY ./images/logger/logrotate.d/* /etc/logrotate.d/
 

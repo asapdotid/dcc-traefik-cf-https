@@ -57,6 +57,22 @@ entryPoints:
       middlewares:
         - securityHeaders@file
 
+  others:
+    address: :9443
+    forwardedHeaders:
+      # Reuse list of Cloudflare Trusted IP's above for HTTPS requests
+      trustedIPs: *trustedIps
+    http:
+      tls:
+        # Generate a wildcard domain certificate
+        certResolver: letsencrypt
+        domains:
+          - main: __DOMAIN_NAME
+            sans:
+              - "*.__DOMAIN_NAME"
+      middlewares:
+        - securityHeaders@file
+
 providers:
   providersThrottleDuration: 2s
 
