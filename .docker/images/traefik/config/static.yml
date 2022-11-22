@@ -5,6 +5,11 @@ global:
 serversTransport:
   insecureSkipVerify: true
 
+# Enable traefik ui
+api:
+  dashboard: __TRAEFIK_API_DASHBOARD
+  insecure: __TRAEFIK_API_INSECURE
+
 entryPoints:
   # Not used in apps, but redirect everything from HTTP to HTTPS
   http:
@@ -73,38 +78,6 @@ entryPoints:
       middlewares:
         - securityHeaders@file
 
-providers:
-  providersThrottleDuration: 2s
-
-  # File provider for connecting things that are outside of docker / defining middleware
-  file:
-    filename: /etc/traefik/conf/dynamic.yml
-    watch: true
-
-  # Docker provider for connecting all apps that are inside of the docker network
-  docker:
-    watch: true
-    network: __DOCKER_NETWORK
-    # defaultRule: 'Host(`{{ index .Labels "com.docker.compose.service"}}.wilopocargo.com`)'
-    swarmModeRefreshSeconds: 15s
-    exposedByDefault: false
-    endpoint: "__DOCKER_ENTRYPOINT"
-
-# Enable traefik ui
-api:
-  dashboard: __TRAEFIK_API_DASHBOARD
-  insecure: __TRAEFIK_API_INSECURE
-
-# Log level INFO|DEBUG|ERROR
-log:
-  level: __LOG_LEVEL
-
-accessLog:
-  filePath: "/var/log/traefik/access.log"
-  fields:
-    names:
-      StartUTC: drop
-
 certificatesResolvers:
   letsencrypt:
     acme:
@@ -116,4 +89,30 @@ certificatesResolvers:
         resolvers:
           - "1.1.1.1:53"
           - "1.0.0.1:53"
-          - "8.8.8.8:53"
+
+providers:
+  providersThrottleDuration: 2s
+
+  # File provider for connecting things that are outside of docker / defining middleware
+  file:
+    filename: /etc/traefik/dynamic
+    watch: true
+
+  # Docker provider for connecting all apps that are inside of the docker network
+  docker:
+    watch: true
+    network: __DOCKER_NETWORK
+    # defaultRule: 'Host(`{{ index .Labels "com.docker.compose.service"}}.wilopocargo.com`)'
+    swarmModeRefreshSeconds: 15s
+    exposedByDefault: false
+    endpoint: "__DOCKER_ENTRYPOINT"
+
+# Log level INFO|DEBUG|ERROR
+log:
+  level: __LOG_LEVEL
+
+accessLog:
+  filePath: "/var/log/traefik/access.log"
+  fields:
+    names:
+      StartUTC: drop

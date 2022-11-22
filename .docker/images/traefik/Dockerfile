@@ -1,18 +1,21 @@
 ARG TRAEFIK_VERSION
 FROM traefik:${TRAEFIK_VERSION} as base
 
-RUN apk --no-cache add sed tzdata perl-mime-base64
-
 ARG CLOUDFLARE_DNS_API_TOKEN
 ENV CLOUDFLARE_DNS_API_TOKEN=${CLOUDFLARE_DNS_API_TOKEN}
+
+RUN apk --no-cache add \
+    sed \
+    tzdata \
+    perl-mime-base64
 
 # Timezone
 ARG TIMEZONE
 ENV TZ=${TIMEZONE}
 RUN ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime && echo $TIMEZONE > /etc/timezone
 
-COPY ./images/traefik/traefik.yml /etc/traefik/traefik.yml
-COPY ./images/traefik/conf/dynamic.yml /etc/traefik/conf/dynamic.yml
+# COPY ./images/traefik/traefik.yml /etc/traefik/traefik.yml
+# COPY ./images/traefik/conf/dynamic.yml /etc/traefik/conf/dynamic.yml
 
 ARG TRAEFIK_LOG_LEVEL
 ARG TRAEFIK_API_DASHBOARD

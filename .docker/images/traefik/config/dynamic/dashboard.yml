@@ -1,0 +1,7 @@
+http:
+  routers:
+    dashboard:
+      rule: Host(`monitor.example.com`)
+      service: api@internal # This is the defined name for api. You cannot change it.
+      tls:
+        certresolver: letsEncrypt
