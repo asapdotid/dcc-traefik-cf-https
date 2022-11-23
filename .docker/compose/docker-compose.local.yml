@@ -16,19 +16,12 @@ services:
     ports:
       - "${TRAEFIK_HOST_HTTP_PORT:-80}:80"
       - "${TRAEFIK_HOST_HTTPS_PORT:-443}:443"
-      - "9443:9443"
     networks:
       - proxy
       - secure
     restart: unless-stopped
     depends_on:
       - dockersocket
-    labels:
-      - traefik.enable=${TRAEFIK_ENABLE:?err}
-      - traefik.http.routers.api.rule=Host(`monitor.${TRAEFIK_DOMAIN_NAME:?err}`)
-      - traefik.http.routers.api.entryPoints=others
-      - traefik.http.routers.api.service=api@internal
-      # - traefik.http.routers.api.middlewares=auth@file
 
   dockersocket:
     volumes:

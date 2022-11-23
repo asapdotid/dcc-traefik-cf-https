@@ -70,8 +70,10 @@ ifeq ($(EXECUTE_IN_CONTAINER),true)
 	EXECUTE_IN_LOGGER_CONTAINER:=$(DOCKER_COMPOSE) exec -T $(DOCKER_SERVICE_NAME_LOGGER)
 endif
 
-
 ##@ [Docker]
+
+.PHONY: docker-init
+docker-init: .docker/.env ## Docker initial environment
 
 .PHONY: docker-clean
 docker-clean: ## Remove the .env file for docker
@@ -86,9 +88,9 @@ validate-docker-variables: .docker/.env
 	@$(if $(TIMEZONE),,$(error TIMEZONE is undefined - Did you run make-init?))
 
 .docker/.env:
-	@cp $(DOCKER_ENV_FILE).$(ENV).example $(DOCKER_ENV_FILE)
+	@cp $(DOCKER_ENV_FILE).example $(DOCKER_ENV_FILE)
 
-.PHONY:docker-build-image
+.PHONY: docker-build-image
 docker-build-image: validate-docker-variables ## Build all docker images OR a specific image by providing the service name via: make docker-build DOCKER_SERVICE_NAME=<service>
 	$(DOCKER_COMPOSE) build $(DOCKER_SERVICE_NAME)
 

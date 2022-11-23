@@ -5,11 +5,6 @@ global:
 serversTransport:
   insecureSkipVerify: true
 
-# Enable traefik ui
-api:
-  dashboard: __TRAEFIK_API_DASHBOARD
-  insecure: __TRAEFIK_API_INSECURE
-
 entryPoints:
   # Not used in apps, but redirect everything from HTTP to HTTPS
   http:
@@ -54,32 +49,16 @@ entryPoints:
     http:
       tls:
         # Generate a wildcard domain certificate
-        certResolver: letsencrypt
+        certResolver: letsEncrypt
         domains:
           - main: __DOMAIN_NAME
             sans:
               - "*.__DOMAIN_NAME"
       middlewares:
-        - securityHeaders@file
-
-  others:
-    address: :9443
-    forwardedHeaders:
-      # Reuse list of Cloudflare Trusted IP's above for HTTPS requests
-      trustedIPs: *trustedIps
-    http:
-      tls:
-        # Generate a wildcard domain certificate
-        certResolver: letsencrypt
-        domains:
-          - main: __DOMAIN_NAME
-            sans:
-              - "*.__DOMAIN_NAME"
-      middlewares:
-        - securityHeaders@file
+        - default@file
 
 certificatesResolvers:
-  letsencrypt:
+  letsEncrypt:
     acme:
       email: __ACME_EMAIL_ADDRESS
       storage: /etc/traefik/ssl/acme.json
@@ -92,20 +71,22 @@ certificatesResolvers:
 
 providers:
   providersThrottleDuration: 2s
-
   # File provider for connecting things that are outside of docker / defining middleware
   file:
-    filename: /etc/traefik/dynamic
+    directory: /etc/traefik/dynamic/
     watch: true
-
   # Docker provider for connecting all apps that are inside of the docker network
   docker:
-    watch: true
-    network: __DOCKER_NETWORK
-    # defaultRule: 'Host(`{{ index .Labels "com.docker.compose.service"}}.wilopocargo.com`)'
-    swarmModeRefreshSeconds: 15s
-    exposedByDefault: false
     endpoint: "__DOCKER_ENTRYPOINT"
+    network: __DOCKER_NETWORK
+    exposedByDefault: false
+    swarmModeRefreshSeconds: 15s
+    watch: true
+
+# Enable traefik ui
+api:
+  dashboard: __TRAEFIK_API_DASHBOARD
+  insecure: __TRAEFIK_API_INSECURE
 
 # Log level INFO|DEBUG|ERROR
 log:
