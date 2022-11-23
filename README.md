@@ -180,7 +180,13 @@ docker network create proxy
 To do:
 
 ```bash
-sudo docker-compose up -d
+make init
+
+make docker-init
+
+make docker-build
+
+make docker-up / make docker-down
 ```
 
 ### Step 6: Additional Docker Service
