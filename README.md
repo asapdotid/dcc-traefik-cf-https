@@ -57,7 +57,7 @@ make init
 
 Modified file in `.make/.env` for build image
 
-```bash
+```ini
 DOCKER_BUILDKIT=1
 COMPOSE_DOCKER_CLI_BUILD=1
 DOCKER_REGISTRY=docker.io
@@ -75,7 +75,7 @@ make docker-init
 
 Modified file in `.docker/.env` for build image
 
-```bash
+```ini
 # docker-compose env vars
 # @see https://docs.docker.com/compose/reference/envvars/
 COMPOSE_CONVERT_WINDOWS_PATHS=1
@@ -213,13 +213,11 @@ https://traefik.localhost/
 
 Let's say you have a domain `example.com` and it's DNS records point to your production server. Just repeat the local deployment steps, but don't forget to update `TRAEFIK_DOMAIN_NAME`, `TRAEFIK_ACME_EMAIL_ADDRESS`, `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER` & `CLOUDFLARE_DNS_API_TOKEN` environment variables. In case of `example.com`, your `.docker/.env` file should have the following lines:
 
-```bash
-
+```ini
 TRAEFIK_DOMAIN_NAME=example.com
 TRAEFIK_ACME_EMAIL_ADDRESS=your@email.com
 TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER=letsencrypt
-CLOUDFLARE_DNS_API_TOKEN=
-
+CLOUDFLARE_DNS_API_TOKEN=cf_dns_api_token_123
 ```
 
 Setting correct email is important because it allows Let’s Encrypt to contact you in case there are any present and future issues with your certificates.
