@@ -13,6 +13,7 @@ Docker container:
 -   Docker Socket Proxy (security) [Document](https://hub.docker.com/r/tecnativa/docker-socket-proxy/#!)
 -   Traefik [Document](https://hub.docker.com/_/traefik)
 -   Logger (logrotate & cron) `Custom for Alpine`
+-   Portainer (Optional) [Document](https://www.portainer.io/)
 
 ### Step 1: Make Sure You Have Required Dependencies
 
@@ -223,10 +224,40 @@ CLOUDFLARE_DNS_API_TOKEN=
 
 Setting correct email is important because it allows Let’s Encrypt to contact you in case there are any present and future issues with your certificates.
 
+## Optinonal add `Portainer` service
+
+Uncomment on docker compose file for `Portainer` service:
+
+File: `.docker/compose/docker-compose.local.yml`
+
+```yaml
+portainer:
+    image: portainer/portainer-ce:latest
+    restart: unless-stopped
+    security_opt:
+        - no-new-privileges:true
+    networks:
+        - secure
+        - proxy
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ../../.data/portainer:/data
+    labels:
+        - traefik.enable=true
+        - traefik.http.routers.portainer.entrypoints=https
+        - traefik.http.routers.portainer.rule=Host(`portainer.${TRAEFIK_DOMAIN_NAME}`)
+        - traefik.http.services.portainer.loadbalancer.server.port=9000
+    depends_on:
+        - dockersocket
+        - traefik
+```
+
+Read instruction after container up [instruction](docs/portainer.md)
+
 ## License
 
 MIT / BSD
 
 ## Author Information
 
-This Docker Compose Traefik was created in 2022 by [Asapdotid](https://github.com/asapdotid) for [Wilopo Crago](https://wilopocargo.com/)
+This Docker Compose Traefik was created in 2022 by [Asapdotid](https://github.com/asapdotid) 🚀
