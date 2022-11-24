@@ -168,13 +168,13 @@ You can paste the username into the `TRAEFIK_USER` environment variable. The oth
 Optional create docker network `secure` & `proxy` for external used if integrate with other docker container and `DOCKER_EXTRENAL_NETWORK=true` on environment file:
 
 ```bash
-docker network create secure
+make docker-network ARGS="create secure"
 ```
 
 and
 
 ```bash
-docker network create proxy
+make docker-network ARGS="create proxy"
 ```
 
 To do:
