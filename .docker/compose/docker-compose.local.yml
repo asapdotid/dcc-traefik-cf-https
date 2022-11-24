@@ -24,6 +24,7 @@ services:
       - dockersocket
 
   dockersocket:
+    restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
@@ -38,12 +39,34 @@ services:
     privileged: true
     networks:
       - secure
-    restart: unless-stopped
 
   logger:
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     volumes:
       - ../../.logs/traefik:/var/log/traefik
     networks:
       - secure
     depends_on:
       - traefik
+
+  # portainer:
+  #   image: portainer/portainer-ce:latest
+  #   restart: unless-stopped
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   networks:
+  #     - secure
+  #     - proxy
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - ../../.data/portainer:/data
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.portainer.entrypoints=https
+  #     - traefik.http.routers.portainer.rule=Host(`portainer.${TRAEFIK_DOMAIN_NAME}`)
+  #     - traefik.http.services.portainer.loadbalancer.server.port=9000
+  #   depends_on:
+  #     - dockersocket
+  #     - traefik
