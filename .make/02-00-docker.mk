@@ -1,9 +1,7 @@
 # For local builds we always want to use "latest" as tag per default
-# ifeq ($(ENV),local)
-# 	TAG:=latest
-# endif
-
-TAG:=latest
+ifeq ($(ENV),local)
+	TAG:=latest
+endif
 
 # Enable buildkit for docker and docker-compose by default for every environment.
 # For specific environments (e.g. MacBook with Apple Silicon M1 CPU) it should be turned off to work stable
@@ -22,11 +20,11 @@ DOCKER_SERVICE_NAME_LOGGER:=logger
 
 # FYI:
 # Naming convention for images is $(DOCKER_REGISTRY)/$(DOCKER_NAMESPACE)/$(DOCKER_SERVICE_NAME)-$(ENV)
-# e.g.               docker.io/wilopo/nginx-development
+# e.g.               docker.io/asapdotid/traefik-local
 # $(DOCKER_REGISTRY)---^          ^       ^      ^        docker.io
-# $(DOCKER_NAMESPACE)-------------^       ^      ^        wilopo
-# $(DOCKER_SERVICE_NAME)------------------^      ^        nginx
-# $(ENV)-----------------------------------------^        development
+# $(DOCKER_NAMESPACE)-------------^       ^      ^        asapdotid
+# $(DOCKER_SERVICE_NAME)------------------^      ^        traefik
+# $(ENV)-----------------------------------------^        local
 
 DOCKER_DIR:=./.docker
 DOCKER_ENV_FILE:=$(DOCKER_DIR)/.env
