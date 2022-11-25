@@ -250,6 +250,34 @@ portainer:
         - traefik
 ```
 
+## Internal Docker COmpose Service Integrate with Traefik (`Labels`)
+
+Sample:
+
+```yaml
+    ...
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.portainer.entrypoints=https
+      - traefik.http.routers.portainer.rule=Host(`app.${TRAEFIK_DOMAIN_NAME}`)
+```
+
+Sample `nginx` service:
+
+```yaml
+web:
+    image: nginx:stable
+    networks:
+        - proxy
+    depends_on:
+        - dockersocket
+        - traefik
+    labels:
+        - traefik.enable=true
+        - traefik.http.routers.portainer.entrypoints=https
+        - traefik.http.routers.portainer.rule=Host(`app.${TRAEFIK_DOMAIN_NAME}`)
+```
+
 Read instruction after container up [instruction](docs/portainer.md)
 
 ## License
