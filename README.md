@@ -250,7 +250,7 @@ portainer:
         - traefik
 ```
 
-## Internal Docker COmpose Service Integrate with Traefik (`Labels`)
+## Internal Docker Compose Service Integrate with Traefik (`Labels`)
 
 Sample:
 
@@ -265,12 +265,11 @@ Sample:
 Sample `nginx` service:
 
 ```yaml
-web:
+nginx:
     image: nginx:stable
     networks:
         - proxy
     depends_on:
-        - dockersocket
         - traefik
     labels:
         - traefik.enable=true
