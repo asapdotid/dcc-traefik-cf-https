@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://i.imgur.com/K7D4zla.png" width="400" />
+    <img src="docs/assets/img/traefik-ssl.png" width="600" />
 </p>
 
 # Docker Compose for Traefik + Let’s Encrypt
@@ -32,14 +32,14 @@ sudo apt-get install git docker-ce docker-ce-cli containerd.io docker-compose-pl
 ### Step 2: Clone the Repository
 
 ```bash
-git clone https://github.com/asapdotid/dcc-traefik.git
+git clone https://github.com/asapdotid/dcc-traefik-proxy-ssl.git
 cd dcc-traefik
 ```
 
 or
 
 ```bash
-git clone git@github.com:wilopo-cargo/dcc-traefik.git
+git clone git@github.com:wilopo-cargo/dcc-traefik-proxy-ssl.git
 cd dcc-traefik
 ```
 
@@ -207,7 +207,7 @@ You can also test it in the browser:
 
 https://localhost/
 
-https://traefik.localhost/
+https://monitor.localhost/
 
 ## Deploying on a Public Server With Real Domain
 
@@ -285,4 +285,4 @@ MIT / BSD
 
 ## Author Information
 
-This Docker Compose Traefik was created in 2022 by [Asapdotid](https://github.com/asapdotid) 🚀
+This Docker Compose Traefik Proxy + SSL was created in 2022 by [Asapdotid](https://github.com/asapdotid) 🚀
