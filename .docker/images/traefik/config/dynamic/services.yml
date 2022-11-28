@@ -1,7 +1,6 @@
-http:
-  services:
-    # noop service, the URL will be never called
-    noop:
-      loadBalancer:
-        servers:
-          - url: http://192.168.0.1
+# http:
+#   services:
+#     noop:
+#       loadBalancer:
+#         servers:
+#           - url: http://192.168.0.1
