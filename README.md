@@ -107,8 +107,8 @@ TRAEFIK_HOST_HTTPS_PORT=443 # Traefik https port
 
 # Docker image version
 SOCKET_PROXY_VERSION=0.1
-TRAEFIK_VERSION=2.9
-ALPINE_VERSION=3.15
+TRAEFIK_VERSION=2.10
+ALPINE_VERSION=3.18
 ```
 
 The password is `adminpass` and you might want to change it before deploying to production.
