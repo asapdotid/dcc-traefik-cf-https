@@ -26,7 +26,7 @@ DOCKER_SERVICE_NAME_LOGGER:=logger
 # $(DOCKER_SERVICE_NAME)------------------^      ^        traefik
 # $(ENV)-----------------------------------------^        local
 
-DOCKER_DIR:=./.docker
+DOCKER_DIR:=${PWD}/src
 DOCKER_ENV_FILE:=$(DOCKER_DIR)/.env
 DOCKER_COMPOSE_DIR:=$(DOCKER_DIR)/compose
 DOCKER_COMPOSE_FILE:=$(DOCKER_COMPOSE_DIR)/docker-compose.yml
