@@ -32,15 +32,8 @@ sudo apt-get install git docker-ce docker-ce-cli containerd.io docker-compose-pl
 ### Step 2: Clone the Repository
 
 ```bash
-git clone https://github.com/asapdotid/dcc-traefik-proxy-ssl.git
-cd dcc-traefik
-```
-
-or
-
-```bash
-git clone git@github.com:wilopo-cargo/dcc-traefik-proxy-ssl.git
-cd dcc-traefik
+git clone https://github.com/asapdotid/dcc-traefik-ssl.git
+cd dcc-traefik-ssl
 ```
 
 Make command help:
@@ -169,16 +162,14 @@ You can paste the username into the `TRAEFIK_USER` environment variable. The oth
 Optional create docker network `secure` & `proxy` for external used if integrate with other docker container and `DOCKER_EXTRENAL_NETWORK=true` on environment file:
 
 ```bash
-make docker-network ARGS="create secure"
+docker network create secure
 ```
 
 and
 
 ```bash
-make docker-network ARGS="create proxy"
+docker network create proxy
 ```
-
-To do:
 
 ```bash
 make init
@@ -186,8 +177,14 @@ make init
 make docker-init
 
 make docker-build
+```
 
-make docker-up / make docker-down
+Docker composer make commands:
+
+```bash
+make docker-up
+# or
+make docker-down
 ```
 
 ### Step 6: Additional Docker Service
@@ -242,6 +239,7 @@ portainer:
         - ../../.data/portainer:/data
     labels:
         - traefik.enable=true
+        - traefil.docker.network=proxy
         - traefik.http.routers.portainer.entrypoints=https
         - traefik.http.routers.portainer.rule=Host(`portainer.${TRAEFIK_DOMAIN_NAME}`)
         - traefik.http.services.portainer.loadbalancer.server.port=9000
@@ -258,6 +256,7 @@ Sample:
     ...
     labels:
       - traefik.enable=true
+      - traefil.docker.network=proxy
       - traefik.http.routers.portainer.entrypoints=https
       - traefik.http.routers.portainer.rule=Host(`app.${TRAEFIK_DOMAIN_NAME}`)
 ```
@@ -273,6 +272,7 @@ nginx:
         - traefik
     labels:
         - traefik.enable=true
+        - traefil.docker.network=proxy
         - traefik.http.routers.portainer.entrypoints=https
         - traefik.http.routers.portainer.rule=Host(`app.${TRAEFIK_DOMAIN_NAME}`)
 ```

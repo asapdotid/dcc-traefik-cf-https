@@ -31,16 +31,16 @@ DOCKER_ENV_FILE:=$(DOCKER_DIR)/.env
 DOCKER_COMPOSE_DIR:=$(DOCKER_DIR)/compose
 DOCKER_COMPOSE_FILE:=$(DOCKER_COMPOSE_DIR)/docker-compose.yml
 DOCKER_COMPOSE_FILE_ENV:=$(DOCKER_COMPOSE_DIR)/docker-compose.$(ENV).yml
-DOCKER_COMPOSE_PROJECT_NAME:=$(PROJECT_NAME)_$(ENV)
 
 # we need a couple of environment variables for docker-compose so we define a make-variable that we can
 # then reference later in the Makefile without having to repeat all the environment variables
-DOCKER_COMPOSE_COMMAND:=ENV=$(ENV) \
- TAG=$(TAG) \
- DOCKER_REGISTRY=$(DOCKER_REGISTRY) \
- DOCKER_NAMESPACE=$(DOCKER_NAMESPACE) \
- TIMEZONE=$(TIMEZONE) \
- docker compose -p $(DOCKER_COMPOSE_PROJECT_NAME) --env-file $(DOCKER_ENV_FILE)
+DOCKER_COMPOSE_COMMAND:= \
+    ENV=$(ENV) \
+    DOCKER_REGISTRY=$(DOCKER_REGISTRY) \
+    DOCKER_NAMESPACE=$(DOCKER_NAMESPACE) \
+    TIMEZONE=$(TIMEZONE) \
+    TAG=$(TAG) \
+    docker compose -p $(DOCKER_PROJECT_NAME) --env-file $(DOCKER_ENV_FILE)
 
 DOCKER_COMPOSE:=$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_FILE_ENV)
 
@@ -72,13 +72,15 @@ endif
 
 .PHONY: docker-init
 docker-init: .docker/.env ## Docker initial environment
+docker-init:
+	@echo "Please update your src/.env file with your settings"
 
 .PHONY: docker-clean
 docker-clean: ## Remove the .env file for docker
 	@rm -f $(DOCKER_ENV_FILE)
 
 .PHONY: validate-docker-variables
-validate-docker-variables: .docker/.env
+validate-docker-variables:
 	@$(if $(TAG),,$(error TAG is undefined))
 	@$(if $(ENV),,$(error ENV is undefined))
 	@$(if $(DOCKER_REGISTRY),,$(error DOCKER_REGISTRY is undefined - Did you run make-init?))
@@ -90,27 +92,37 @@ validate-docker-variables: .docker/.env
 
 .PHONY: docker-build-image
 docker-build-image: validate-docker-variables ## Build all docker images OR a specific image by providing the service name via: make docker-build DOCKER_SERVICE_NAME=<service>
-	$(DOCKER_COMPOSE) build $(DOCKER_SERVICE_NAME)
+	@$(DOCKER_COMPOSE) build $(DOCKER_SERVICE_NAME)
 
 .PHONY: docker-build
 docker-build: docker-build-image ## Build the php image and then all other docker images
 
-.PHONY: docker-up
-docker-up: validate-docker-variables ## Create and start all docker containers. To create/start only a specific container, use DOCKER_SERVICE_NAME=<service>
-	$(DOCKER_COMPOSE) up -d $(DOCKER_SERVICE_NAME)
-
-.PHONY: docker-down
-docker-down: validate-docker-variables ## Stop and remove all docker containers.
-	@$(DOCKER_COMPOSE) down --remove-orphans -v
-
-.PHONY: docker-config
-docker-config: validate-docker-variables ## List the configuration
-	@$(DOCKER_COMPOSE) config
-
-.PHONY: docker-network
-docker-network: ## Docker network with arguments ARGS="create app-network"
-	@docker network $(ARGS)
-
 .PHONY: docker-prune
 docker-prune: ## Remove ALL unused docker resources, including volumes
 	@docker system prune -a -f --volumes
+
+##@ [Docker Compose]
+
+.PHONY: compose-up
+compose-up: validate-docker-variables ## Create and start all docker containers. To create/start only a specific container, use DOCKER_SERVICE_NAME=<service>
+	@$(DOCKER_COMPOSE) up -d $(DOCKER_SERVICE_NAME)
+
+.PHONY: compose-down
+compose-down: validate-docker-variables ## Stop and remove all docker containers.
+	@$(DOCKER_COMPOSE) down --remove-orphans -v
+
+.PHONY: compose-restart
+compose-restart: validate-docker-variables ## Restart docker containers.
+	@$(DOCKER_COMPOSE) restart $(DOCKER_SERVICE_NAME)
+
+.PHONY: compose-config
+compose-config: validate-docker-variables ## List the configuration
+	@$(DOCKER_COMPOSE) config $(DOCKER_SERVICE_NAME)
+
+.PHONY: compose-logs
+compose-logs: validate-docker-variables ## Logs docker containers.
+	@$(DOCKER_COMPOSE) logs --tail=100 -f $(DOCKER_SERVICE_NAME)
+
+.PHONY: compose-ps
+compose-ps: validate-docker-variables ## Docker composer PS containers.
+	@$(DOCKER_COMPOSE) ps $(DOCKER_SERVICE_NAME)
