@@ -14,6 +14,8 @@ http:
       chain:
         middlewares:
           - securityHeaders
+          - corsHeaders
+          - cacheHeaders
           - gzip
 
     securityHeaders:
@@ -35,6 +37,28 @@ http:
         stsIncludeSubdomains: true
         stsSeconds: 63072000
         stsPreload: true
+
+    corsHeaders:
+      headers:
+        accessControlAllowCredentials: true
+        accessControlAllowHeaders:
+          - Origin
+          - Authorization
+          - Content-Type
+        accessControlAllowMethods:
+          - OPTION
+          - GET
+          - POST
+          - PUT
+          - PATCH
+        accessControlAllowOriginList: "__TRAEFIK_CORS_ALLOW_ORIGIN"
+        accessControlMaxAge: 100
+        addVaryHeader: true
+
+    cacheHeaders:
+      headers:
+        customResponseHeaders:
+          Cache-Control: "no-cache, max-age=0"
 
     gzip:
       compress: {}
