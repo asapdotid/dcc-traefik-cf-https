@@ -89,6 +89,7 @@ TRAEFIK_API_INSECURE=false                                                      
 TRAEFIK_API_DASHBOARD_SUBDOMAIN=monitor                                               # Traefik Dashboard subdomain monitor.domain.com
 TRAEFIK_BASIC_AUTH_USERNAME=admin                                                     # Traefik Dashboard basic auth username
 TRAEFIK_BASIC_AUTH_PASSWORD_HASH=JGFwcjEkOVdtNjRHalUkT2dBOEhJNEwxUzYxVXJXbE9aYkNaMQ== # Traefik Dashboard basic auth password encode base64 (read doc)
+TEAEFIK_CORS_ALLOW_ORIGIN=origin-list-or-null                                         # Traefik enable CORS header
 
 # Docker compose config
 COMPOSE_NETWORK_DRIVER=bridge # Docker network driver
