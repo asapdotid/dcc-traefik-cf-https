@@ -37,6 +37,9 @@ http:
         stsIncludeSubdomains: true
         stsSeconds: 63072000
         stsPreload: true
+        frameDeny: true
+        sslForceHost: true
+        permissionsPolicy: "geolocation=(self), microphone=(), camera=(), payment=(), usb=(), vr=(), fullscreen=*"
 
     corsHeaders:
       headers:
