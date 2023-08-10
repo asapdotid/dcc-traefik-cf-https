@@ -21,16 +21,16 @@ http:
     securityHeaders:
       headers:
         customResponseHeaders:
-          X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex"
+          X-Robots-Tag: none,noarchive,nosnippet,notranslate,noimageindex
           server: ""
-          X-Forwarded-Proto: "https"
+          X-Forwarded-Proto: https
         sslProxyHeaders:
           X-Forwarded-Proto: https
-        referrerPolicy: "same-origin"
+        referrerPolicy: origin-when-cross-origin
         hostsProxyHeaders:
-          - "X-Forwarded-Host"
+          - X-Forwarded-Host
         customRequestHeaders:
-          X-Forwarded-Proto: "https"
+          X-Forwarded-Proto: https
         contentTypeNosniff: true
         browserXssFilter: true
         forceSTSHeader: true
@@ -39,7 +39,8 @@ http:
         stsPreload: true
         frameDeny: true
         sslForceHost: true
-        permissionsPolicy: "geolocation=(self), microphone=(), camera=(), payment=(), usb=(), vr=(), fullscreen=*"
+        contentSecurityPolicy: script-src 'self'
+        permissionsPolicy: geolocation=(self), microphone=(), camera=(), payment=(), usb=(), vr=(), fullscreen=*
 
     corsHeaders:
       headers:

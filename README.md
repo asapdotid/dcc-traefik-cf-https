@@ -278,6 +278,24 @@ nginx:
         - traefik.http.routers.portainer.rule=Host(`app.${TRAEFIK_DOMAIN_NAME}`)
 ```
 
+Also included is an option that allows only TLS v1.3. This option must be manually configured. There is an example below on how to do this with a docker label.
+
+```yaml
+nginx:
+    image: nginx:stable
+    networks:
+        - proxy
+    depends_on:
+        - traefik
+    labels:
+        - traefik.enable=true
+        - traefil.docker.network=proxy
+        # only TLS v1.3
+        - traefik.http.routers.project-app.tls.options=tlsv13only@file
+        - traefik.http.routers.portainer.entrypoints=https
+        - traefik.http.routers.portainer.rule=Host(`app.${TRAEFIK_DOMAIN_NAME}`)
+```
+
 Read instruction after container up [instruction](docs/portainer.md)
 
 ## License
