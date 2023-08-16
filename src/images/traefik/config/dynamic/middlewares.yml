@@ -21,12 +21,12 @@ http:
     securityHeaders:
       headers:
         customResponseHeaders:
-          X-Robots-Tag: none,noarchive,nosnippet,notranslate,noimageindex
+          X-Robots-Tag: __TRAEFIK_HEADER_X_ROBOTS_TA
           server: ""
           X-Forwarded-Proto: https
         sslProxyHeaders:
           X-Forwarded-Proto: https
-        referrerPolicy: origin-when-cross-origin
+        referrerPolicy: __TRAEFIK_HEADER_REFERRER_POLICY
         hostsProxyHeaders:
           - X-Forwarded-Host
         customRequestHeaders:
@@ -37,10 +37,10 @@ http:
         stsIncludeSubdomains: true
         stsSeconds: 63072000
         stsPreload: true
-        frameDeny: true
         sslForceHost: true
-        contentSecurityPolicy: script-src 'self'
-        permissionsPolicy: geolocation=(self), microphone=(), camera=(), payment=(), usb=(), vr=(), fullscreen=*
+        frameDeny: __TRAEFIK_HEADER_FRAME_DENY
+        contentSecurityPolicy: __TRAEFIK_HEADER_CONTENT_SECURITY_POLICY
+        permissionsPolicy: __TRAEFIK_HEADER_PERMISSION_POLICY
 
     corsHeaders:
       headers:
@@ -55,7 +55,7 @@ http:
           - POST
           - PUT
           - PATCH
-        accessControlAllowOriginList: "__TRAEFIK_CORS_ALLOW_ORIGIN"
+        accessControlAllowOriginList: "__TRAEFIK_HEADER_CORS_LIST"
         accessControlMaxAge: 100
         addVaryHeader: true
 
