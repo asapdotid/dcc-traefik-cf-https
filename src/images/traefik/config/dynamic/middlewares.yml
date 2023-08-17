@@ -55,7 +55,7 @@ http:
           - POST
           - PUT
           - PATCH
-        accessControlAllowOriginList: "__TRAEFIK_HEADER_CORS_LIST"
+        accessControlAllowOriginList: "__TEAEFIK_HEADER_CORS_LIST"
         accessControlMaxAge: 100
         addVaryHeader: true
 
