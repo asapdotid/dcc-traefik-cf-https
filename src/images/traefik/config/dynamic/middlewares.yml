@@ -13,10 +13,16 @@ http:
     default:
       chain:
         middlewares:
+          - redirectTo
           - securityHeaders
           - corsHeaders
           - cacheHeaders
           - gzip
+
+    redirectTo:
+      redirectScheme:
+        scheme: https
+        permanent: true
 
     securityHeaders:
       headers:
@@ -37,7 +43,6 @@ http:
         stsIncludeSubdomains: true
         stsSeconds: 63072000
         stsPreload: true
-        sslForceHost: true
         frameDeny: __TRAEFIK_HEADER_FRAME_DENY
         contentSecurityPolicy: __TRAEFIK_HEADER_CONTENT_SECURITY_POLICY
         permissionsPolicy: __TRAEFIK_HEADER_PERMISSION_POLICY
