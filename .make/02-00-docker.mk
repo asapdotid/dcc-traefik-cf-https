@@ -76,8 +76,8 @@ docker-init: .docker/.env ## Docker initial environment
 docker-init:
 	@echo "Please update your src/.env file with your settings"
 
-.PHONY: docker-clean
-docker-clean: ## Remove the .env file for docker
+.PHONY: docker-clean-env
+docker-clean-env: ## Remove the .env file for docker
 	@rm -f $(DOCKER_ENV_FILE)
 
 .PHONY: validate-docker-variables
