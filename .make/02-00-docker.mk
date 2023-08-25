@@ -98,6 +98,10 @@ docker-build-image: validate-docker-variables ## Build all docker images OR a sp
 .PHONY: docker-build
 docker-build: docker-build-image ## Build the php image and then all other docker images
 
+.PHONY: docker-clean
+docker-prune: ## Removing dangling and unused images
+	@docker rmi -f $(docker images -f "dangling=true" -q)
+
 .PHONY: docker-prune
 docker-prune: ## Remove ALL unused docker resources, including volumes
 	@docker system prune -a -f --volumes
