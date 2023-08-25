@@ -100,7 +100,7 @@ docker-build: docker-build-image ## Build the php image and then all other docke
 
 .PHONY: docker-clean
 docker-clean: ## Removing dangling and unused images
-	@docker rmi -f $(docker images -f "dangling=true" -q)
+	@docker rmi -f $$(docker images -f "dangling=true" -q)
 
 .PHONY: docker-prune
 docker-prune: ## Remove ALL unused docker resources, including volumes
