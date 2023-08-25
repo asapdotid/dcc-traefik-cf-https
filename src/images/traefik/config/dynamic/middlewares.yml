@@ -13,16 +13,16 @@ http:
     default:
       chain:
         middlewares:
-          - redirectTo
+          # - redirectTo
           - securityHeaders
           - corsHeaders
           - cacheHeaders
           - gzip
 
-    redirectTo:
-      redirectScheme:
-        scheme: https
-        permanent: true
+    # redirectTo:
+    #   redirectScheme:
+    #     scheme: https
+    #     permanent: true
 
     securityHeaders:
       headers:
