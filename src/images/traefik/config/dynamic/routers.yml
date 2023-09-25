@@ -5,5 +5,3 @@
 #         - https
 #       rule: HostRegexp(`{any:.+}`)
 #       service: noop@file
-#       tls:
-#         certresolver: letsEncrypt
