@@ -1,31 +1,32 @@
 global:
-  checkNewVersion: true
-  sendAnonymousUsage: false
+  checkNewVersion: false
+  sendAnonymousUsage: true
 
 serversTransport:
   insecureSkipVerify: true
 
 entryPoints:
-  # Not used in apps, but redirect everything from HTTP to HTTPS
+# Not used in apps, but redirect everything from HTTP to HTTPS
   http:
     address: :80
     forwardedHeaders:
       trustedIPs:
         &trustedIps # Start of Clouflare public IP list for HTTP requests, remove this if you don't use it
-        - 173.245.48.0/20
         - 103.21.244.0/22
         - 103.22.200.0/22
         - 103.31.4.0/22
-        - 141.101.64.0/18
+        - 104.16.0.0/13
+        - 104.24.0.0/14
         - 108.162.192.0/18
-        - 190.93.240.0/20
+        - 131.0.72.0/22
+        - 141.101.64.0/18
+        - 162.158.0.0/15
+        - 172.64.0.0/13
+        - 173.245.48.0/20
         - 188.114.96.0/20
+        - 190.93.240.0/20
         - 197.234.240.0/22
         - 198.41.128.0/17
-        - 162.158.0.0/15
-        - 104.16.0.0/12
-        - 172.64.0.0/13
-        - 131.0.72.0/22
         - 2400:cb00::/32
         - 2606:4700::/32
         - 2803:f800::/32
@@ -51,23 +52,23 @@ entryPoints:
         # Generate a wildcard domain certificate
         certResolver: letsEncrypt
         domains:
-          - main: __DOMAIN_NAME
+          - main: domain.com
             sans:
-              - "*.__DOMAIN_NAME"
+              - "*.domain.com"
       middlewares:
         - default@file
 
 certificatesResolvers:
   letsEncrypt:
     acme:
-      email: __ACME_EMAIL_ADDRESS
+      email: email@mail.com
       storage: /etc/traefik/ssl/acme.json
       dnsChallenge:
-        provider: __ACME_DNS_CHALLENGE_PROVIDER
+        provider: cloudflare
         delayBeforeCheck: 0
         resolvers:
           - "1.1.1.1:53"
-          - "1.0.0.1:53"
+          - "8.8.8.8:53"
 
 providers:
   providersThrottleDuration: 2s
@@ -77,23 +78,23 @@ providers:
     watch: true
   # Docker provider for connecting all apps that are inside of the docker network
   docker:
-    endpoint: "__DOCKER_ENTRYPOINT"
-    network: __DOCKER_NETWORK
+    endpoint: "tcp://dockersocket:2375"
+    network: proxy
     exposedByDefault: false
     swarmModeRefreshSeconds: 15s
     watch: true
 
 # Enable traefik ui
 api:
-  dashboard: __TRAEFIK_API_DASHBOARD
-  insecure: __TRAEFIK_API_INSECURE
+  dashboard: true
+  insecure: false
 
 # Log level INFO|DEBUG|ERROR
 log:
-  level: __LOG_LEVEL
+  level: INFO
 
 accessLog:
-  filePath: "/var/log/traefik/access.log"
+  filePath: /var/log/traefik/access.log
   fields:
     names:
       StartUTC: drop
