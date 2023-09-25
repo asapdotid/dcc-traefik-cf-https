@@ -3,8 +3,8 @@ http:
     dashboard:
       entryPoints:
         - https
-      rule: Host(`__TRAEFIK_API_DASHBOARD_SUBDOMAIN.__DOMAIN_NAME`)
-      service: api@internal # This is the defined name for api. You cannot change it.
+      rule: Host(`monitor.domain_name.com`)
+      service: api@internal
       tls:
         certresolver: letsEncrypt
       middlewares:
