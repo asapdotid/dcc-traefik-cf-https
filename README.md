@@ -2,9 +2,9 @@
     <img src="docs/assets/img/traefik-ssl.png" width="600" />
 </p>
 
-# Docker Compose for Traefik + Let’s Encrypt
+# Docker Compose Traefik - Proxy Container Service (HTTPS :443)
 
-This guide shows you how to deploy your containers behind Traefik reverse-proxy. It will obtain and refresh HTTPS certificates automatically and it comes with password-protected Traefik dashboard.
+This guide shows you how to deploy your containers behind Traefik reverse-proxy. It will obtain and refresh `HTTPS` certificates automatically and it comes with password-protected Traefik dashboard.
 
 ## Run on Local Computer
 
@@ -32,8 +32,8 @@ sudo apt-get install git docker-ce docker-ce-cli containerd.io docker-compose-pl
 ### Step 2: Clone the Repository
 
 ```bash
-git clone https://github.com/asapdotid/dcc-traefik-ssl.git
-cd dcc-traefik-ssl
+git clone https://github.com/asapdotid/dcc-traefik-https.git
+cd dcc-traefik-https
 ```
 
 Make command help:
@@ -51,59 +51,19 @@ make init
 Modified file in `.make/.env` for build image
 
 ```ini
-DOCKER_BUILDKIT=1
-COMPOSE_DOCKER_CLI_BUILD=1
+# Project variables
 DOCKER_REGISTRY=docker.io
 DOCKER_NAMESPACE=asapdotid
-PROJECT_NAME=docker-traefik
-ENV=local
-TIMEZONE=Asia/Jakarta
+DOCKER_PROJECT_NAME=proxy
 ```
 
 ### Step 3: Make Initial Environment Variables
 
 ```bash
-make docker-init
+make set-init
 ```
 
-Modified file in `.docker/.env` for build image
-
-```ini
-# docker-compose env vars
-# @see https://docs.docker.com/compose/reference/envvars/
-COMPOSE_CONVERT_WINDOWS_PATHS=1
-
-# timezone
-TIMEZONE=Asia/Jakarta # Timezone for os and log level
-
-# Traefik config
-TRAEFIK_LOG_LEVEL=INFO                                                                # Traefik log level: INFO|ERROR|DEBUG
-TRAEFIK_DOMAIN_NAME=domain.com                                                        # Domain name
-TRAEFIK_DOCKER_NETWORK=proxy                                                          # Docker network
-TRAEFIK_DOCKER_ENTRYPOINT=tcp://dockersocket:2375                                     # Docker socket - Don't change
-TRAEFIK_ACME_EMAIL_ADDRESS=your_emaild@gmail.com                                       # Acme email (provide valid email)
-TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER=cloudflare                                        # Acme Profider
-CLOUDFLARE_DNS_API_TOKEN=                                                             # CloudFlare DNS API Token
-TRAEFIK_API_DASHBOARD=true                                                            # Traefik Dashboard true|false
-TRAEFIK_API_INSECURE=false                                                            # Traefik Insecure Port :8080
-TRAEFIK_API_DASHBOARD_SUBDOMAIN=monitor                                               # Traefik Dashboard subdomain monitor.domain.com
-TRAEFIK_BASIC_AUTH_USERNAME=admin                                                     # Traefik Dashboard basic auth username
-TRAEFIK_BASIC_AUTH_PASSWORD_HASH=JGFwcjEkOVdtNjRHalUkT2dBOEhJNEwxUzYxVXJXbE9aYkNaMQ== # Traefik Dashboard basic auth password encode base64 (read doc)
-TEAEFIK_CORS_ALLOW_ORIGIN=origin-list-or-null                                         # Traefik enable CORS header
-
-# Docker compose config
-COMPOSE_NETWORK_DRIVER=bridge # Docker network driver
-COMPOSE_NETWORK_EXTERNAL=true # Docker network external
-
-# Traefik Ports config
-TRAEFIK_HOST_HTTP_PORT=80   # Traefik http port
-TRAEFIK_HOST_HTTPS_PORT=443 # Traefik https port
-
-# Docker image version
-SOCKET_PROXY_VERSION=0.1
-TRAEFIK_VERSION=2.10
-ALPINE_VERSION=3.18
-```
+Modified file in `src/.env` for build image
 
 The password is `adminpass` and you might want to change it before deploying to production.
 
@@ -156,11 +116,11 @@ Check decode:
 echo 'JGFwcjEkVzNqSE1iRUckVEN6eU9JQ0FXdi82a2tyYUNIS1lDMAo=' | openssl enc -d -base64
 ```
 
-You can paste the username into the `TRAEFIK_USER` environment variable. The other part, `hashedPassword`, should be assigned to `TRAEFIK_PASSWORD_HASH`. Now you have your own `username`:`password` pair.
+You can paste the username into the `TRAEFIK_BASIC_AUTH_USERNAME` environment variable. The other part, `hashedPassword`, should be assigned to `TRAEFIK_BASIC_AUTH_PASSWORD_HASH`. Now you have your own `username`:`password` pair.
 
 ### Step 5: Launch Your Deployment
 
-Optional create docker network `secure` & `proxy` for external used if integrate with other docker container and `DOCKER_EXTRENAL_NETWORK=true` on environment file:
+Optional create docker network `secure` & `proxy` for external used with other docker containers:
 
 ```bash
 docker network create secure
@@ -173,19 +133,17 @@ docker network create proxy
 ```
 
 ```bash
-make init
+make set-init
 
-make docker-init
-
-make docker-build
+make build
 ```
 
 Docker composer make commands:
 
 ```bash
-make docker-up
+make up
 # or
-make docker-down
+make down
 ```
 
 ### Step 6: Additional Docker Service
@@ -198,24 +156,45 @@ Can remove or command.
 ### Step 7: Test Your Deployment
 
 ```bash
-curl --insecure https://localhost/
+curl -I https://{domain_name}/
 ```
 
 You can also test it in the browser:
 
-https://localhost/
+https://{domain_name}/
 
-https://monitor.localhost/
+https://monitor.{domain_name}/
 
-## Deploying on a Public Server With Real Domain
+# Deploying on a Public Server With Real Domain
 
-Let's say you have a domain `example.com` and it's DNS records point to your production server. Just repeat the local deployment steps, but don't forget to update `TRAEFIK_DOMAIN_NAME`, `TRAEFIK_ACME_EMAIL_ADDRESS`, `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER` & `CLOUDFLARE_DNS_API_TOKEN` environment variables. In case of `example.com`, your `.docker/.env` file should have the following lines:
+Traefik requires you to define "Certificate Resolvers" in the static configuration, which are responsible for retrieving certificates from an ACME server.
+
+Then, each "router" is configured to enable TLS, and is associated to a certificate resolver through the tls.certresolver configuration option.
+
+Read [Traefik Let's Encrypt](https://doc.traefik.io/traefik/https/acme/)
+
+Here is a list of supported providers, on this project:
+
+-   Cloudflare
+-   Digitalocean
+-   (_will update ..._)
+
+Let's say you have a domain `example.com` and it's DNS records point to your production server. Just repeat the local deployment steps, but don't forget to update `TRAEFIK_DOMAIN_NAME`, `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER`, `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL` & `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN` environment variables. In case of `example.com`, your `.src/.env` file should have the following lines:
 
 ```ini
 TRAEFIK_DOMAIN_NAME=example.com
-TRAEFIK_ACME_EMAIL_ADDRESS=your@email.com
-TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER=letsencrypt
-CLOUDFLARE_DNS_API_TOKEN=cf_dns_api_token_123
+TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER=cloudflare
+TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL=email@mail.com
+TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN=coudflare-access-token-123ABC
+```
+
+Or
+
+```ini
+TRAEFIK_DOMAIN_NAME=example.com
+TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER=digitalocean
+TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL=email@mail.com
+TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN=digitalocean-access-token-123ABC
 ```
 
 Setting correct email is important because it allows Let’s Encrypt to contact you in case there are any present and future issues with your certificates.
@@ -304,4 +283,4 @@ MIT / BSD
 
 ## Author Information
 
-This Docker Compose Traefik Proxy + SSL was created in 2022 by [Asapdotid](https://github.com/asapdotid) 🚀
+This Docker Compose Traefik HTTPS was created in 2022 by [Asapdotid](https://github.com/asapdotid) 🚀
