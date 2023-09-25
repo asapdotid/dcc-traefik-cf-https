@@ -4,8 +4,9 @@ http:
     # Use with traefik.http.routers.myRouter.middlewares: "traefikBasicAuth@file"
     traefikBasicAuth:
       basicAuth:
+        removeHeader: true
         users:
-          - "__TRAEFIK_BASIC_AUTH_USERNAME:__TRAEFIK_BASIC_AUTH_PASSWORD_HASH"
+          - "admin:$apr1$W3jHMbEG$TCzyOICAWv/6kkraCHKYC0"
 
     # Recommended default middleware for most of the services
     # Use with traefik.http.routers.myRouter.middlewares: "default@file"
@@ -13,61 +14,60 @@ http:
     default:
       chain:
         middlewares:
-          # - redirectTo
-          - securityHeaders
-          - corsHeaders
-          - cacheHeaders
-          - gzip
+          - midRateLimit
+          - midSecurityHeaders
+          - midCorsHeaders
+          - midCacheHeaders
+          - midGzip
 
-    # redirectTo:
-    #   redirectScheme:
-    #     scheme: https
-    #     permanent: true
+    midRateLimit:
+      rateLimit:
+        average: 100
+        burst: 50
 
-    securityHeaders:
+    midSecurityHeaders:
       headers:
         customResponseHeaders:
-          X-Robots-Tag: __TRAEFIK_HEADER_X_ROBOTS_TA
+          X-Robots-Tag: none,noarchive,nosnippet,notranslate,noimageindex
           server: ""
+          X-Forwarded-Proto: https
+        customRequestHeaders:
           X-Forwarded-Proto: https
         sslProxyHeaders:
           X-Forwarded-Proto: https
-        referrerPolicy: __TRAEFIK_HEADER_REFERRER_POLICY
         hostsProxyHeaders:
           - X-Forwarded-Host
-        customRequestHeaders:
-          X-Forwarded-Proto: https
+        referrerPolicy: origin-when-cross-origin
         contentTypeNosniff: true
         browserXssFilter: true
         forceSTSHeader: true
         stsIncludeSubdomains: true
         stsSeconds: 63072000
         stsPreload: true
-        frameDeny: __TRAEFIK_HEADER_FRAME_DENY
-        contentSecurityPolicy: __TRAEFIK_HEADER_CONTENT_SECURITY_POLICY
-        permissionsPolicy: __TRAEFIK_HEADER_PERMISSION_POLICY
+        frameDeny: true
+        contentSecurityPolicy: __TRAEFIK_MID_SEC_CONTENT_SECURITY_POLICY
+        permissionsPolicy: __TRAEFIK_MID_SEC_PERMISSION_POLICY
 
-    corsHeaders:
+    midCorsHeaders:
       headers:
         accessControlAllowCredentials: true
         accessControlAllowHeaders:
-          - Origin
-          - Authorization
-          - Content-Type
+          - "*"
         accessControlAllowMethods:
           - OPTION
           - GET
           - POST
           - PUT
+          - DELETE
           - PATCH
-        accessControlAllowOriginList: "__TEAEFIK_HEADER_CORS_LIST"
+        accessControlAllowOriginList: origin-list-or-null
         accessControlMaxAge: 100
         addVaryHeader: true
 
-    cacheHeaders:
+    midCacheHeaders:
       headers:
         customResponseHeaders:
           Cache-Control: "no-cache, max-age=0"
 
-    gzip:
+    midGzip:
       compress: {}
