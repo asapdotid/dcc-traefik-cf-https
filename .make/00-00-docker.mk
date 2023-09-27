@@ -13,8 +13,8 @@ export DOCKER_BUILDKIT
 
 # Container names
 ## must match the names used in the docker-composer.yml files
-DOCKER_SERVICE_NAME_TRAEFIK:=traefik
 DOCKER_SERVICE_NAME_DOCKER_SOCKET:=dockersocket
+DOCKER_SERVICE_NAME_TRAEFIK:=traefik
 DOCKER_SERVICE_NAME_LOGGER:=logger
 
 # FYI:
@@ -67,17 +67,17 @@ endif
 
 ##@ [Docker]
 
-.PHONY: set-init
-set-init: .docker/.env ## Docker initial environment
-set-init:
+.PHONY: set-env
+set-env: .docker/.env ## Docker setup environment variables
+set-env:
 	@echo "Please update your src/.env file with your settings"
 
 .PHONY: rm-env
 rm-env: ## Remove the .env file for docker
 	@rm -f $(DOCKER_ENV_FILE)
 
-.PHONY: validate-docker-variables
-validate-docker-variables:
+.PHONY: validate-variables
+validate-variables:
 	@$(if $(TAG),,$(error TAG is undefined))
 	@$(if $(DOCKER_REGISTRY),,$(error DOCKER_REGISTRY is undefined - Did you run make-init?))
 	@$(if $(DOCKER_NAMESPACE),,$(error DOCKER_NAMESPACE is undefined - Did you run make-init?))
@@ -86,12 +86,12 @@ validate-docker-variables:
 .docker/.env:
 	@cp $(DOCKER_ENV_FILE).example $(DOCKER_ENV_FILE)
 
-.PHONY: docker-build-image
-docker-build-image: validate-docker-variables ## Build all docker images OR a specific image by providing the service name via: make docker-build DOCKER_SERVICE_NAME=<service>
+.PHONY: build-image
+build-image: validate-variables ## Build all docker images OR a specific image by providing the service name via: make docker-build DOCKER_SERVICE_NAME=<service>
 	@$(DOCKER_COMPOSE) build $(DOCKER_SERVICE_NAME)
 
 .PHONY: build
-build: docker-build-image ## Build the php image and then all other docker images
+build: build-image ## Build the php image and then all other docker images
 
 .PHONY: clean
 clean: ## Removing dangling and unused images
@@ -101,28 +101,28 @@ clean: ## Removing dangling and unused images
 prune: ## Remove ALL unused docker resources, including volumes
 	@docker system prune -a -f --volumes
 
-##@ [Docker: Compose]
+##@ [Docker Compose]
 
 .PHONY: up
-up: validate-docker-variables ## Create and start all docker containers. To create/start only a specific container, use DOCKER_SERVICE_NAME=<service>
+up: validate-variables ## Create and start all docker containers. To create/start only a specific container, use DOCKER_SERVICE_NAME=<service>
 	@$(DOCKER_COMPOSE) up -d $(DOCKER_SERVICE_NAME)
 
 .PHONY: down
-down: validate-docker-variables ## Stop and remove all docker containers.
+down: validate-variables ## Stop and remove all docker containers.
 	@$(DOCKER_COMPOSE) down --remove-orphans -v
 
 .PHONY: restart
-restart: validate-docker-variables ## Restart docker containers.
+restart: validate-variables ## Restart docker containers.
 	@$(DOCKER_COMPOSE) restart $(DOCKER_SERVICE_NAME)
 
 .PHONY: config
-config: validate-docker-variables ## List the configuration
+config: validate-variables ## List the configuration
 	@$(DOCKER_COMPOSE) config $(DOCKER_SERVICE_NAME)
 
 .PHONY: logs
-logs: validate-docker-variables ## Logs docker containers.
+logs: validate-variables ## Logs docker containers.
 	@$(DOCKER_COMPOSE) logs --tail=100 -f $(DOCKER_SERVICE_NAME)
 
 .PHONY: ps
-ps: validate-docker-variables ## Docker composer PS containers.
+ps: validate-variables ## Docker composer PS containers.
 	@$(DOCKER_COMPOSE) ps $(DOCKER_SERVICE_NAME)
