@@ -241,6 +241,18 @@ Sample:
       - traefik.http.routers.portainer.rule=Host(`app.${TRAEFIK_DOMAIN_NAME}`)
 ```
 
+Path prefix with loadbalancer:
+
+```yaml
+- traefik.enable=true
+- traefik.docker.network=proxy
+- traefik.http.routers.backend-v1.entrypoints=https
+- traefik.http.routers.backend-v1.rule=Host(`api.domain_name.com`) && PathPrefix(`/v1`)
+- traefik.http.services.backend-v1.loadbalancer.server.port=3000
+- traefik.http.routers.backend-v1.middlewares=api-strip
+- traefik.http.middlewares.api-strip.stripprefix.prefixes=/v1
+```
+
 Sample `nginx` service:
 
 ```yaml
