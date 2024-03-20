@@ -72,8 +72,19 @@ if [ -f "$__TRAEFIK_DYNAMIC_MIDDLEWARES_CONFIG_FILE" ]; then
     with(.http.middlewares.midSecurityHeaders.headers; .frameDeny = '$TRAEFIK_MID_SEC_FRAME_DENY')' \
     -i "$__TRAEFIK_DYNAMIC_MIDDLEWARES_CONFIG_FILE"
 
+  ## Custom content security policy
+  if [ -n "$TRAEFIK_MID_SEC_CONTENT_SECURITY_POLICY" ]; then
+    sed \
+      -e "s#__TRAEFIK_MID_SEC_CONTENT_SECURITY_POLICY#$TRAEFIK_MID_SEC_CONTENT_SECURITY_POLICY#g" \
+      -i "$__TRAEFIK_DYNAMIC_MIDDLEWARES_CONFIG_FILE"
+  else
+    yq eval \
+      'del(.http.middlewares.midSecurityHeaders.headers.contentSecurityPolicy)' \
+      -i "$__TRAEFIK_DYNAMIC_MIDDLEWARES_CONFIG_FILE"
+  fi
+
+  ## Custom permission policy
   sed \
-    -e "s#__TRAEFIK_MID_SEC_CONTENT_SECURITY_POLICY#$TRAEFIK_MID_SEC_CONTENT_SECURITY_POLICY#g" \
     -e "s#__TRAEFIK_MID_SEC_PERMISSION_POLICY#$TRAEFIK_MID_SEC_PERMISSION_POLICY#g" \
     -i "$__TRAEFIK_DYNAMIC_MIDDLEWARES_CONFIG_FILE"
 
