@@ -17,14 +17,14 @@ __SEC_HOSTS_PROXY=$(echo "$TRAEFIK_MID_SEC_HOSTS_PROXY" | sed -E 's/^|$/"/g; s/ 
 __CORS_ALLOW_ORIGIN_LIST=$(echo "$TRAEFIK_MID_CORS_ALLOW_ORIGIN_LIST" | sed -E 's/^|$/"/g; s/ /","/g')
 
 # Environment Variable Name (Authentication token)
-if [[ "$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER" == 'cloudflare' ]]; then
-  export CLOUDFLARE_DNS_API_TOKEN=$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN
-elif [[ "$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER" == 'digitalocean' ]]; then
-  export DO_AUTH_TOKEN=$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN
+if [ "$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER" = 'cloudflare' ]; then
+  export CLOUDFLARE_DNS_API_TOKEN="$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN"
+elif [ "$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER" = 'digitalocean' ]; then
+  export DO_AUTH_TOKEN="$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN"
 fi
 
 # Modify traefik config
-if [[ -f "$__TRAEFIK_CONFIG_FILE" ]]; then
+if [ -f "$__TRAEFIK_CONFIG_FILE" ]; then
   yq eval \
     'with(.entryPoints.https.http.tls; .domains = [{"main": "'$TRAEFIK_DOMAIN_NAME'", "sans": ["*.'$TRAEFIK_DOMAIN_NAME'"]}]) |
     with(.certificatesResolvers.letsEncrypt.acme; .email = "'$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL'") |
@@ -35,14 +35,14 @@ if [[ -f "$__TRAEFIK_CONFIG_FILE" ]]; then
 fi
 
 # Modify traefik dashboard config
-if [[ -f "$__TRAEFIK_DYNAMIC_DASHBAORD_CONFIG_FILE" ]]; then
+if [ -f "$__TRAEFIK_DYNAMIC_DASHBAORD_CONFIG_FILE" ]; then
   yq eval \
     'with(.http.routers.dashboard; .rule = "'$__DASHBOARD_URL'")' \
     -i "$__TRAEFIK_DYNAMIC_DASHBAORD_CONFIG_FILE"
 fi
 
 # Modify traefik middlewares config
-if [[ -f "$__TRAEFIK_DYNAMIC_MIDDLEWARES_CONFIG_FILE" ]]; then
+if [ -f "$__TRAEFIK_DYNAMIC_MIDDLEWARES_CONFIG_FILE" ]; then
   ## Custom basic auth
   yq eval \
     'with(.http.middlewares.traefikBasicAuth.basicAuth; .users = ["'$__BASIC_AUTH'"])' \
