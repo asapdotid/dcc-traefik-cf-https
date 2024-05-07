@@ -19,8 +19,9 @@ __CORS_ALLOW_ORIGIN_LIST=$(echo "$TRAEFIK_MID_CORS_ALLOW_ORIGIN_LIST" | sed -E '
 # Environment Variable Name (Authentication token)
 if [ "$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER" = 'cloudflare' ]; then
   export CLOUDFLARE_DNS_API_TOKEN="$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN"
-elif [ "$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER" = 'digitalocean' ]; then
-  export DO_AUTH_TOKEN="$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN"
+else
+  echo "Invalid ACME DNS challenge provider. Please use cloudflare."
+  exit 1
 fi
 
 # Modify traefik config
