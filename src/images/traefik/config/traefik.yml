@@ -79,7 +79,7 @@ providers:
   # Docker provider for connecting all apps that are inside of the docker network
   docker:
     endpoint: "tcp://dockersocket:2375"
-    network: proxy
+    network: secure
     exposedByDefault: false
     swarmModeRefreshSeconds: 15s
     watch: true
