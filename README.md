@@ -2,7 +2,7 @@
     <img src="docs/assets/img/traefik-ssl.png" width="600" />
 </p>
 
-# Docker Compose Traefik - Proxy Container Service (HTTPS :443)
+# Docker Compose Traefik - Proxy Container Service (Cloudflare)
 
 This guide shows you how to deploy your containers behind Traefik reverse-proxy. It will obtain and refresh `HTTPS` certificates automatically and it comes with password-protected Traefik dashboard.
 
@@ -176,7 +176,6 @@ Read [Traefik Let's Encrypt](https://doc.traefik.io/traefik/https/acme/)
 Here is a list of supported providers, on this project:
 
 -   Cloudflare
--   Digitalocean
 -   (_will update ..._)
 
 Let's say you have a domain `example.com` and it's DNS records point to your production server. Just repeat the local deployment steps, but don't forget to update `TRAEFIK_DOMAIN_NAME`, `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER`, `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL` & `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN` environment variables. In case of `example.com`, your `.src/.env` file should have the following lines:
@@ -186,15 +185,6 @@ TRAEFIK_DOMAIN_NAME=example.com
 TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER=cloudflare
 TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL=email@mail.com
 TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN=coudflare-access-token-123ABC
-```
-
-Or
-
-```ini
-TRAEFIK_DOMAIN_NAME=example.com
-TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER=digitalocean
-TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL=email@mail.com
-TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN=digitalocean-access-token-123ABC
 ```
 
 Setting correct email is important because it allows Let’s Encrypt to contact you in case there are any present and future issues with your certificates.
