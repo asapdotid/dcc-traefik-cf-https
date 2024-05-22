@@ -1,5 +1,4 @@
-# version: "3.7"
-
+---
 services:
   dockersocket:
     image: ${DOCKER_REGISTRY?}/${DOCKER_NAMESPACE?}/docker-socket-proxy-local:${TAG?}
