@@ -188,6 +188,38 @@ TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN=coudflare-access-token-123ABC
 
 Setting correct email is important because it allows Let’s Encrypt to contact you in case there are any present and future issues with your certificates.
 
+## Redirect `WWW` to `NON WWW`
+
+Example labels redirect www to npn www:
+
+```yaml
+labels:
+    - traefik.enable=true
+    - traefik.http.routers.whoami.entrypoints=https
+    - traefik.http.routers.whoami.rule=Host(`jogjascript.com`)||Host(`www.jogjascript.com`)
+    # Add redirect middlewares for http and https
+    - traefik.http.routers.whoami.middlewares=redirect-http-www@file,redirect-https-www@file
+```
+
+Example docker compose `whoami`:
+
+```yaml
+whoami:
+    image: traefik/whoami:latest
+    container_name: whoami
+    networks:
+        - secure
+        - proxy
+    depends_on:
+        - traefik
+    labels:
+        - traefik.enable=true
+        - traefik.http.routers.whoami.entrypoints=https
+        - traefik.http.routers.whoami.rule=Host(`jogjascript.com`)||Host(`www.jogjascript.com`)
+        # Add redirect middlewares for http and https
+        - traefik.http.routers.whoami.middlewares=redirect-http-www@file,redirect-https-www@file
+```
+
 ## Optinonal add `Portainer` service
 
 Uncomment on docker compose file for `Portainer` service:
