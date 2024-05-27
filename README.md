@@ -6,13 +6,23 @@
 
 This guide shows you how to deploy your containers behind Traefik reverse-proxy. It will obtain and refresh `HTTPS` certificates automatically and it comes with password-protected Traefik dashboard.
 
-## Run on Local Computer
+## Docker container
 
-Docker container:
+### Main container
 
--   Docker Socket Proxy (security) [Document](https://hub.docker.com/r/tecnativa/docker-socket-proxy/#!)
--   Traefik 2.11.x [Document](https://hub.docker.com/_/traefik)
--   Logger (logrotate & cron) `Custom for Alpine`
+- Docker Socket Proxy 0.1/latest
+- Traefik 2.11.x or 3.0.x
+- Logger Alpine Linux 3.19 or 3.20
+
+### Docker container:
+
+-   Docker Socket Proxy 0.1/latest (security) [Document](https://hub.docker.com/r/tecnativa/docker-socket-proxy/#!)
+-   Traefik 2.11.x [Document](https://doc.traefik.io/traefik/v2.11/)
+-   Traefik 3.0.x [Document](https://doc.traefik.io/traefik/)
+-   Logger (logrotate & cron) `Custom for Alpine Linux`
+
+### Optional (development)
+
 -   Whoami (prints OS information - local development) [Document](https://github.com/traefik/whoami)
 -   Portainer (Optional) [Document](https://www.portainer.io/)
 
