@@ -52,6 +52,21 @@ services:
     depends_on:
       - traefik
 
+  # whoami:
+  #   image: traefik/whoami:latest
+  #   container_name: whoami
+  #   networks:
+  #     - secure
+  #     - proxy
+  #   depends_on:
+  #     - traefik
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.whoami.entrypoints=https
+  #     - traefik.http.routers.whoami.rule=Host(`jogjascript.com`)||Host(`www.jogjascript.com`)
+  #     # Add redirect middlewares for http and https
+  #     - traefik.http.routers.whoami.middlewares=redirect-http-www@file,redirect-https-www@file
+
   # portainer:
   #   image: portainer/portainer-ce:latest
   #   restart: unless-stopped
