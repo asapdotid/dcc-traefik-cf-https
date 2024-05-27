@@ -177,7 +177,6 @@ Read [Traefik Let's Encrypt](https://doc.traefik.io/traefik/https/acme/)
 Here is a list of supported providers, on this project:
 
 -   Cloudflare
--   (_will update ..._)
 
 Let's say you have a domain `example.com` and it's DNS records point to your production server. Just repeat the local deployment steps, but don't forget to update `TRAEFIK_DOMAIN_NAME`, `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL` & `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN` environment variables. In case of `example.com`, your `.src/.env` file should have the following lines:
 
