@@ -11,8 +11,9 @@ This guide shows you how to deploy your containers behind Traefik reverse-proxy.
 Docker container:
 
 -   Docker Socket Proxy (security) [Document](https://hub.docker.com/r/tecnativa/docker-socket-proxy/#!)
--   Traefik [Document](https://hub.docker.com/_/traefik)
+-   Traefik 2.11.x [Document](https://hub.docker.com/_/traefik)
 -   Logger (logrotate & cron) `Custom for Alpine`
+-   Whoami (prints OS information - local development) [Document](https://github.com/traefik/whoami)
 -   Portainer (Optional) [Document](https://www.portainer.io/)
 
 ### Step 1: Make Sure You Have Required Dependencies
@@ -25,7 +26,7 @@ Docker container:
 
 Official documentation for install Docker with new Docker Compose V2 [doc](https://docs.docker.com/engine/install/), and you can install too Docker Compose V1. Follow official documentation.
 
-```
+```bash
 sudo apt-get install git docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
 
@@ -54,7 +55,7 @@ Modified file in `.make/.env` for build image
 # Project variables
 DOCKER_REGISTRY=docker.io
 DOCKER_NAMESPACE=asapdotid
-DOCKER_PROJECT_NAME=proxy
+DOCKER_PROJECT_NAME=cf-proxy
 ```
 
 ### Step 3: Make Initial Environment Variables
@@ -176,13 +177,11 @@ Read [Traefik Let's Encrypt](https://doc.traefik.io/traefik/https/acme/)
 Here is a list of supported providers, on this project:
 
 -   Cloudflare
--   (_will update ..._)
 
-Let's say you have a domain `example.com` and it's DNS records point to your production server. Just repeat the local deployment steps, but don't forget to update `TRAEFIK_DOMAIN_NAME`, `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER`, `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL` & `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN` environment variables. In case of `example.com`, your `.src/.env` file should have the following lines:
+Let's say you have a domain `example.com` and it's DNS records point to your production server. Just repeat the local deployment steps, but don't forget to update `TRAEFIK_DOMAIN_NAME`, `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL` & `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN` environment variables. In case of `example.com`, your `.src/.env` file should have the following lines:
 
 ```ini
 TRAEFIK_DOMAIN_NAME=example.com
-TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER=cloudflare
 TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL=email@mail.com
 TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN=coudflare-access-token-123ABC
 ```
