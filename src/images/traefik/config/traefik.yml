@@ -81,7 +81,7 @@ providers:
     endpoint: "tcp://dockersocket:2375"
     network: secure
     exposedByDefault: false
-    swarmModeRefreshSeconds: 15s
+    # swarmModeRefreshSeconds: 15s
     watch: true
 
 # Enable traefik ui
