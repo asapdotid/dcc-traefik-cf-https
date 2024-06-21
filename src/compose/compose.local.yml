@@ -10,18 +10,37 @@ networks:
 services:
   dockersocket:
     restart: unless-stopped
+    environment:
+      - AUTH=0
+      - BUILD=0
+      - COMMIT=0
+      - CONFIGS=0
+      - CONTAINERS=1
+      - DISABLE_IPV6=0
+      - DISTRIBUTION=0
+      - EVENTS=1
+      - EXEC=0
+      - IMAGES=0
+      - INFO=1
+      - NETWORKS=1
+      - NODES=1
+      - PING=1
+      - POST=0
+      - PLUGINS=0
+      - SECRETS=0
+      - SERVICES=0
+      - SESSION=0
+      - SWARM=0
+      - SYSTEM=0
+      - TASKS=0
+      - VERSION=1
+      - VOLUMES=0
+    privileged: true
+    read_only: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - CONTAINERS=1
-      - POST=0
-      - INFO=1
-      - IMAGES=1
-      - NODES=1
-      - VOLUMES=1
-      - NETWORKS=1
-      - EXEC=1
-    privileged: true
+    tmpfs:
+      - /run
     networks:
       - secure
 
