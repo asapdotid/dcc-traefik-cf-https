@@ -1,4 +1,4 @@
-ARG SOCKET_PROXY_VERSION
-FROM linuxserver/socket-proxy:${SOCKET_PROXY_VERSION} as base
+ARG SOCKET_PROXY_VERSION=latest
+FROM linuxserver/socket-proxy:${SOCKET_PROXY_VERSION} AS base
 
-FROM base as local
+FROM base AS local

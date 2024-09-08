@@ -1,6 +1,6 @@
-ARG TRAEFIK_VERSION
-FROM mikefarah/yq:4 as yq
-FROM traefik:${TRAEFIK_VERSION} as base
+ARG TRAEFIK_VERSION=3.1
+FROM mikefarah/yq:4 AS yq
+FROM traefik:${TRAEFIK_VERSION} AS base
 
 # Timezone
 ARG TIMEZONE
@@ -129,4 +129,4 @@ ENTRYPOINT ["/entrypoint.sh"]
 # Default command
 CMD [ "traefik" ]
 
-FROM base as local
+FROM base AS local

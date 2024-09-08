@@ -1,7 +1,7 @@
-ARG ALPINE_VERSION
-FROM alpine:${ALPINE_VERSION} as base
+ARG ALPINE_VERSION=3.20
+FROM alpine:${ALPINE_VERSION} AS base
 
-RUN apk add --update  \
+RUN apk add --no-cache \
     apk-cron \
     logrotate \
     tzdata \
@@ -29,4 +29,4 @@ RUN chmod 644 -R /etc/crontabs/root \
 
 CMD [ "crond", "-l", "2", "-f", "-L", "/var/log/cron/cron.log" ]
 
-FROM base as local
+FROM base AS local

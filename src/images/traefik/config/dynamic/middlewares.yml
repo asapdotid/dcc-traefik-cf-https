@@ -18,6 +18,7 @@ http:
           - midSecurityHeaders
           - midCorsHeaders
           - midCacheHeaders
+          - midWellknown
           - midGzip
 
     midRateLimit:
@@ -45,7 +46,7 @@ http:
         stsSeconds: 63072000
         stsPreload: true
         frameDeny: true
-        contentSecurityPolicy: __TRAEFIK_MID_SEC_CONTENT_SECURITY_POLICY
+        # contentSecurityPolicy: __TRAEFIK_MID_SEC_CONTENT_SECURITY_POLICY
         permissionsPolicy: __TRAEFIK_MID_SEC_PERMISSION_POLICY
 
     midCorsHeaders:
@@ -68,6 +69,11 @@ http:
       headers:
         customResponseHeaders:
           Cache-Control: "no-cache, max-age=0"
+
+    midWellknown:
+      replacepathregex:
+        regex: "^(/.well-known.*)"
+        replacement: '/index.php$${1}"'
 
     midGzip:
       compress: {}
