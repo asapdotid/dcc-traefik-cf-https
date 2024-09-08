@@ -1,7 +1,7 @@
 ARG ALPINE_VERSION=3.20
 FROM alpine:${ALPINE_VERSION} AS base
 
-RUN apk add --no-cache \
+RUN apk add --no-cache --upgrade \
     apk-cron \
     logrotate \
     tzdata \
