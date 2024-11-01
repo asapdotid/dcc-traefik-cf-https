@@ -71,16 +71,6 @@ endif
 
 ##@ [Docker]
 
-.PHONY: set-env
-set-env: .docker/.env ## Docker setup environment variables
-set-env:
-	@echo "Please update your src/.env file with your settings"
-
-.PHONY: rm-env
-rm-env: ## Remove the .env file for docker
-	@rm -f $(DOCKER_ENV_FILE)
-
-.PHONY: validate-variables
 validate-variables:
 	@$(if $(TAG),,$(error TAG is undefined))
 	@$(if $(DOCKER_REGISTRY),,$(error DOCKER_REGISTRY is undefined - Did you run make-init?))
@@ -90,8 +80,7 @@ validate-variables:
 .docker/.env:
 	@cp $(DOCKER_ENV_FILE).example $(DOCKER_ENV_FILE)
 
-.PHONY: build-image
-build-image: validate-variables ## Build all docker images OR a specific image by providing the service name via: make docker-build DOCKER_SERVICE_NAME=<service>
+build-image: validate-variables
 	@$(DOCKER_COMPOSE) build $(DOCKER_SERVICE_NAME)
 
 .PHONY: build
@@ -107,8 +96,13 @@ prune: ## Remove ALL unused docker resources, including volumes
 
 ##@ [Docker Compose]
 
+.PHONY: env
+env: .docker/.env ## Setup environment variables (src/.env)
+env:
+	@echo "Please update your src/.env file with your settings"
+
 .PHONY: up
-up: validate-variables ## Create and start all docker containers. To create/start only a specific container, use DOCKER_SERVICE_NAME=<service>
+up: validate-variables ## Create and start all docker containers.
 	@$(DOCKER_COMPOSE) up -d $(DOCKER_SERVICE_NAME)
 
 .PHONY: down

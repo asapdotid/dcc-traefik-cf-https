@@ -46,7 +46,7 @@ http:
         stsSeconds: 63072000
         stsPreload: true
         frameDeny: true
-        # contentSecurityPolicy: __TRAEFIK_MID_SEC_CONTENT_SECURITY_POLICY
+        contentSecurityPolicy: __TRAEFIK_MID_SEC_CONTENT_SECURITY_POLICY
         permissionsPolicy: __TRAEFIK_MID_SEC_PERMISSION_POLICY
 
     midCorsHeaders:

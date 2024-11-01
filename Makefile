@@ -47,7 +47,7 @@ include .make/*.mk
 ##
 ## init ENVS="KEY_1=value1 KEY_2=value2"
 .PHONY: init
-init: ENVS= ## Initializes the deployment .make/.env file with ENV variables for make
+init: ENVS= ## Initializes the deployment make environment variables (.make/.env)
 init:
 	@cp .make/.env.example .make/.env
 	@for variable in $(ENVS); do \
