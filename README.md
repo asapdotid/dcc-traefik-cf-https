@@ -10,8 +10,8 @@ This guide shows you how to deploy your containers behind Traefik reverse-proxy.
 
 ### Main container
 
--   Docker Socket Proxy 1.26.1/latest
--   Traefik 2.11.x or 3.0.x
+-   Docker Socket Proxy 1.26.2/latest
+-   Traefik 2.11.x or 3.1.x
 -   Logger Alpine Linux 3.19 or 3.20
 
 ### Docker container:
@@ -43,8 +43,8 @@ sudo apt-get install git docker-ce docker-ce-cli containerd.io docker-compose-pl
 ### Step 2: Clone the Repository
 
 ```bash
-git clone https://github.com/asapdotid/dcc-traefik-https.git
-cd dcc-traefik-https
+git clone https://github.com/asapdotid/dcc-traefik-cf-https.git
+cd dcc-traefik-cf-https
 ```
 
 Make command help:
@@ -62,16 +62,25 @@ make init
 Modified file in `.make/.env` for build image
 
 ```ini
+...
 # Project variables
 DOCKER_REGISTRY=docker.io
 DOCKER_NAMESPACE=asapdotid
 DOCKER_PROJECT_NAME=cf-proxy
+
+# Docker image version
+SOCKET_PROXY_VERSION=1.26.2
+TRAEFIK_VERSION=3.1
+ALPINE_VERSION=3.20
+
+# Timezone for os and log level
+TIMEZONE=Asia/Jakarta
 ```
 
-### Step 3: Make Initial Environment Variables
+### Step 3: Make Docker Compose Initial Environment Variables
 
 ```bash
-make set-init
+make env
 ```
 
 Modified file in `src/.env` for build image
@@ -144,7 +153,7 @@ docker network create proxy
 ```
 
 ```bash
-make set-init
+make env
 
 make build
 ```
@@ -188,7 +197,7 @@ Here is a list of supported providers, on this project:
 
 -   Cloudflare
 
-Let's say you have a domain `example.com` and it's DNS records point to your production server. Just repeat the local deployment steps, but don't forget to update `TRAEFIK_DOMAIN_NAME`, `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL` & `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN` environment variables. In case of `example.com`, your `.src/.env` file should have the following lines:
+Let's say you have a domain `example.com` and it's DNS records point to your production server. Just repeat the local deployment steps, but don't forget to update `TRAEFIK_DOMAIN_NAME`, `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL` & `TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN` environment variables. In case of `example.com`, your `src/.env` file should have the following lines:
 
 ```ini
 TRAEFIK_DOMAIN_NAME=example.com
@@ -234,7 +243,7 @@ whoami:
 
 Uncomment on docker compose file for `Portainer` service:
 
-File: `.docker/compose/docker-compose.local.yml`
+File: `src/compose/docker-compose.local.yml`
 
 ```yaml
 portainer:
