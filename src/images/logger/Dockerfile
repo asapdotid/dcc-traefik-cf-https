@@ -20,7 +20,7 @@ COPY ./images/logger/logrotate.conf /etc/logrotate.conf
 ARG PATH_TO_LOG_DIR=/var/log/cron
 ARG PATH_TO_CRON_OUTPUT_LOG=$PATH_TO_LOG_DIR/cron-output.log
 # TODO: Use "0 0 * * *"
-RUN echo "*  *  *  *  * $(which logrotate) /etc/logrotate.conf -v >> ${PATH_TO_CRON_OUTPUT_LOG} 2>&1" > /etc/crontabs/root
+RUN echo "0  0  *  *  * $(which logrotate) /etc/logrotate.conf -v >> ${PATH_TO_CRON_OUTPUT_LOG} 2>&1" > /etc/crontabs/root
 
 RUN chmod 644 -R /etc/crontabs/root \
     /etc/logrotate.conf \

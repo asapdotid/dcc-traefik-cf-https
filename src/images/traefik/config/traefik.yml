@@ -92,9 +92,21 @@ api:
 # Log level INFO|DEBUG|ERROR
 log:
   level: INFO
+  maxSize: 100
+  maxBackups: 3
+  maxAge: 3
+  compress: true
 
 accessLog:
   filePath: /var/log/traefik/access.log
+  bufferingSize: 100
+  format: json
+  filters:
+    statusCodes:
+      - "200"
+      - "300-302"
+    retryAttempts: true
+    minDuration: "10ms"
   fields:
     names:
       StartUTC: drop
