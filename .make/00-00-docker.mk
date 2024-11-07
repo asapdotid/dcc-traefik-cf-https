@@ -1,7 +1,6 @@
 # For local builds we always want to use "latest" as tag per default
 TAG:=latest
 
-
 # Enable buildkit for docker and docker-compose by default for every environment.
 # For specific environments (e.g. MacBook with Apple Silicon M1 CPU) it should be turned off to work stable
 # - this can be done in the .make/.env file
