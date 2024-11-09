@@ -3,9 +3,8 @@ networks:
   proxy:
     driver: bridge
     external: true
-  secure:
-    driver: bridge
-    external: true
+  securenet:
+    name: securenet
 
 services:
   dockersocket:
@@ -42,7 +41,7 @@ services:
     tmpfs:
       - /run
     networks:
-      - secure
+      - securenet
 
   traefik:
     restart: unless-stopped
@@ -63,7 +62,7 @@ services:
         protocol: tcp
         mode: host
     networks:
-      - secure
+      - securenet
       - proxy
     depends_on:
       - dockersocket
@@ -75,7 +74,7 @@ services:
     volumes:
       - ${CURDIR}/.logs/traefik:/var/log/traefik
     networks:
-      - secure
+      - securenet
     depends_on:
       - traefik
 
@@ -83,7 +82,7 @@ services:
   #   image: traefik/whoami:latest
   #   container_name: whoami
   #   networks:
-  #     - secure
+  #     - securenet
   #     - proxy
   #   depends_on:
   #     - traefik
@@ -100,7 +99,7 @@ services:
   #   security_opt:
   #     - no-new-privileges:true
   #   networks:
-  #     - secure
+  #     - securenet
   #     - proxy
   #   volumes:
   #     - /etc/localtime:/etc/localtime:ro
