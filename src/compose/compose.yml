@@ -1,7 +1,7 @@
 ---
 services:
   dockersocket:
-    image: ${DOCKER_REGISTRY?}/${DOCKER_NAMESPACE?}/docker-socket-proxy-local:${TAG?}
+    image: ${DOCKER_REGISTRY?}/${DOCKER_NAMESPACE?}/docker-socket-local:${TAG?}
     build:
       context: ${CURDIR}/src/
       dockerfile: ./images/docker-socket/Dockerfile
