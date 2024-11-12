@@ -69,8 +69,8 @@ DOCKER_NAMESPACE=asapdotid
 DOCKER_PROJECT_NAME=cf-proxy
 
 # Docker image version
-SOCKET_PROXY_VERSION=1.26.2
-TRAEFIK_VERSION=3.1
+DOCKER_SOCKET_VERSION=latest
+TRAEFIK_VERSION=3.2
 ALPINE_VERSION=3.20
 
 # Timezone for os and log level
@@ -140,16 +140,10 @@ You can paste the username into the `TRAEFIK_BASIC_AUTH_USERNAME` environment va
 
 ### Step 5: Launch Your Deployment
 
-Optional create docker network `secure` & `proxy` for external used with other docker containers:
+Optional create docker network `proxynet` for external used with other docker containers:
 
 ```bash
-docker network create secure
-```
-
-and
-
-```bash
-docker network create proxy
+docker network create proxynet
 ```
 
 ```bash

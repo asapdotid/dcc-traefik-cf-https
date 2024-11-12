@@ -4,10 +4,10 @@ services:
     image: ${DOCKER_REGISTRY?}/${DOCKER_NAMESPACE?}/docker-socket-proxy-local:${TAG?}
     build:
       context: ${CURDIR}/src/
-      dockerfile: ./images/docker-socket-proxy/Dockerfile
+      dockerfile: ./images/docker-socket/Dockerfile
       target: local
       args:
-        - SOCKET_PROXY_VERSION=${SOCKET_PROXY_VERSION?}
+        - DOCKER_SOCKET_VERSION=${DOCKER_SOCKET_VERSION?}
 
   traefik:
     image: ${DOCKER_REGISTRY?}/${DOCKER_NAMESPACE?}/traefik-local:${TAG?}

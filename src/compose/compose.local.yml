@@ -1,10 +1,12 @@
 ---
 networks:
-  proxy:
+  proxynet:
+    name: proxynet
     driver: bridge
     external: true
   securenet:
     name: securenet
+    internal: true
 
 services:
   dockersocket:
@@ -63,7 +65,7 @@ services:
         mode: host
     networks:
       - securenet
-      - proxy
+      - proxynet
     depends_on:
       - dockersocket
 
@@ -83,7 +85,7 @@ services:
   #   container_name: whoami
   #   networks:
   #     - securenet
-  #     - proxy
+  #     - proxynet
   #   depends_on:
   #     - traefik
   #   labels:
@@ -100,7 +102,7 @@ services:
   #     - no-new-privileges:true
   #   networks:
   #     - securenet
-  #     - proxy
+  #     - proxynet
   #   volumes:
   #     - /etc/localtime:/etc/localtime:ro
   #     - ${CURDIR}/.data/portainer:/data
