@@ -69,8 +69,8 @@ DOCKER_NAMESPACE=asapdotid
 DOCKER_PROJECT_NAME=cf-proxy
 
 # Docker image version
-SOCKET_PROXY_VERSION=1.26.2
-TRAEFIK_VERSION=3.1
+DOCKER_SOCKET_VERSION=latest
+TRAEFIK_VERSION=3.2
 ALPINE_VERSION=3.20
 
 # Timezone for os and log level
@@ -140,16 +140,10 @@ You can paste the username into the `TRAEFIK_BASIC_AUTH_USERNAME` environment va
 
 ### Step 5: Launch Your Deployment
 
-Optional create docker network `secure` & `proxy` for external used with other docker containers:
+Optional create docker network `net-proxy` for external used with other docker containers:
 
 ```bash
-docker network create secure
-```
-
-and
-
-```bash
-docker network create proxy
+docker network create net-proxy
 ```
 
 ```bash
@@ -207,28 +201,32 @@ TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_TOKEN=coudflare-access-token-123ABC
 
 Setting correct email is important because it allows Let’s Encrypt to contact you in case there are any present and future issues with your certificates.
 
-## Redirect `WWW` to `NON WWW`
+## Redirect `WWW` to `NON WWW` external services (other docker compose file)
 
 Example labels redirect www to npn www:
 
 ```yaml
 labels:
     - traefik.enable=true
+    - traefil.docker.network=net-proxy
     - traefik.http.routers.whoami.entrypoints=https
     - traefik.http.routers.whoami.rule=Host(`jogjascript.com`)||Host(`www.jogjascript.com`)
     # Add redirect middlewares for http and https
     - traefik.http.routers.whoami.middlewares=redirect-http-www@file,redirect-https-www@file
 ```
 
-Example docker compose `whoami`:
+### Example Docker Compose
+
+> File: `src/compose/docker-compose.local.yml`
+
+#### Whoami
 
 ```yaml
 whoami:
     image: traefik/whoami:latest
     container_name: whoami
     networks:
-        - secure
-        - proxy
+        - net-internal
     depends_on:
         - traefik
     labels:
@@ -239,11 +237,7 @@ whoami:
         - traefik.http.routers.whoami.middlewares=redirect-http-www@file,redirect-https-www@file
 ```
 
-## Optinonal add `Portainer` service
-
-Uncomment on docker compose file for `Portainer` service:
-
-File: `src/compose/docker-compose.local.yml`
+#### Portainer
 
 ```yaml
 portainer:
@@ -252,14 +246,12 @@ portainer:
     security_opt:
         - no-new-privileges:true
     networks:
-        - secure
-        - proxy
+        - net-internal
     volumes:
         - /etc/localtime:/etc/localtime:ro
         - ../../.data/portainer:/data
     labels:
         - traefik.enable=true
-        - traefil.docker.network=proxy
         - traefik.http.routers.portainer.entrypoints=https
         - traefik.http.routers.portainer.rule=Host(`portainer.${TRAEFIK_DOMAIN_NAME}`)
         - traefik.http.services.portainer.loadbalancer.server.port=9000
@@ -268,14 +260,15 @@ portainer:
         - traefik
 ```
 
-## Internal Docker Compose Service Integrate with Traefik (`Labels`)
+## External Docker Compose Service Integrate with Traefik (`Labels`)
 
 Sample:
 
 ```yaml
+---
 labels:
     - traefik.enable=true
-    - traefil.docker.network=proxy
+    - traefil.docker.network=net-proxy
     - traefik.http.routers.portainer.entrypoints=https
     - traefik.http.routers.portainer.rule=Host(`app.${TRAEFIK_DOMAIN_NAME}`)
 ```
@@ -283,9 +276,10 @@ labels:
 Path prefix with loadbalancer:
 
 ```yaml
+---
 labels:
     - traefik.enable=true
-    - traefik.docker.network=proxy
+    - traefik.docker.network=net-proxy
     - traefik.http.routers.backend-v1.entrypoints=https
     - traefik.http.routers.backend-v1.rule=Host(`api.domain_name.com`) && PathPrefix(`/v1`)
     - traefik.http.services.backend-v1.loadbalancer.server.port=3000
@@ -296,15 +290,14 @@ labels:
 Sample `nginx` service:
 
 ```yaml
+---
 nginx:
     image: nginx:stable
     networks:
-        - proxy
-    depends_on:
-        - traefik
+        - net-proxy
     labels:
         - traefik.enable=true
-        - traefil.docker.network=proxy
+        - traefil.docker.network=net-proxy
         - traefik.http.routers.portainer.entrypoints=https
         - traefik.http.routers.portainer.rule=Host(`app.${TRAEFIK_DOMAIN_NAME}`)
 ```
@@ -312,15 +305,14 @@ nginx:
 Also included is an option that allows only TLS v1.3. This option must be manually configured. There is an example below on how to do this with a docker label.
 
 ```yaml
+---
 nginx:
     image: nginx:stable
     networks:
-        - proxy
-    depends_on:
-        - traefik
+        - net-proxy
     labels:
         - traefik.enable=true
-        - traefil.docker.network=proxy
+        - traefil.docker.network=net-proxy
         # only TLS v1.3
         - traefik.http.routers.project-app.tls.options=tlsv13only@file
         - traefik.http.routers.portainer.entrypoints=https

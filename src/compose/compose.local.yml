@@ -1,11 +1,11 @@
 ---
 networks:
-  proxy:
+  net-proxy:
+    name: net-proxy
     driver: bridge
     external: true
-  secure:
-    driver: bridge
-    external: true
+  net-internal:
+    name: net-internal
 
 services:
   dockersocket:
@@ -42,7 +42,7 @@ services:
     tmpfs:
       - /run
     networks:
-      - secure
+      - net-internal
 
   traefik:
     restart: unless-stopped
@@ -63,8 +63,8 @@ services:
         protocol: tcp
         mode: host
     networks:
-      - secure
-      - proxy
+      - net-internal
+      - net-proxy
     depends_on:
       - dockersocket
 
@@ -75,7 +75,7 @@ services:
     volumes:
       - ${CURDIR}/.logs/traefik:/var/log/traefik
     networks:
-      - secure
+      - net-internal
     depends_on:
       - traefik
 
@@ -83,8 +83,8 @@ services:
   #   image: traefik/whoami:latest
   #   container_name: whoami
   #   networks:
-  #     - secure
-  #     - proxy
+  #     - net-internal
+  #     - net-proxy
   #   depends_on:
   #     - traefik
   #   labels:
@@ -100,8 +100,8 @@ services:
   #   security_opt:
   #     - no-new-privileges:true
   #   networks:
-  #     - secure
-  #     - proxy
+  #     - net-internal
+  #     - net-proxy
   #   volumes:
   #     - /etc/localtime:/etc/localtime:ro
   #     - ${CURDIR}/.data/portainer:/data
