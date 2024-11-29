@@ -91,7 +91,9 @@ api:
 
 # Log level INFO|DEBUG|ERROR
 log:
-  level: INFO
+  level: ERROR
+  filePath: /var/log/traefik/traefik.log
+  format: common
   maxSize: 100
   maxBackups: 3
   maxAge: 3
@@ -100,7 +102,7 @@ log:
 accessLog:
   filePath: /var/log/traefik/access.log
   bufferingSize: 100
-  format: json
+  format: common
   filters:
     statusCodes:
       - "200"

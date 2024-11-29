@@ -10,10 +10,6 @@ execute-in-container:
 traefik-shell: ## Execute shell script in Traefik container with arguments ARGS="pwd"
 	@$(EXECUTE_IN_TRAEFIK_CONTAINER) $(ARGS);
 
-.PHONY: logger-shell
-logger-shell: ## Execute shell script in Logger container with arguments ARGS="pwd"
-	@$(EXECUTE_IN_LOGGER_CONTAINER) $(ARGS);
-
 .PHONY: socket-shell
 socket-shell: ## Execute shell script in Socket container with arguments ARGS="pwd"
 	@$(EXECUTE_IN_DOCKER_SOCKET_CONTAINER) $(ARGS);

@@ -1,3 +1,0 @@
-# access.log    (see .docker/images/traefik/traefik.yml at http.access_log)
-/var/log/traefik/*.log {
-}
