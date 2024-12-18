@@ -118,7 +118,7 @@ COPY ./images/traefik/config/traefik.yml /etc/traefik/traefik.yml
 COPY ./images/traefik/config/dynamic/ /etc/traefik/dynamic/
 
 # Copy entrypoint
-COPY ./images/traefik/entrypoint.sh /
+COPY ./images/traefik/entrypoint.sh /entrypoint.sh
 
 # Expose ports
 EXPOSE 80 443

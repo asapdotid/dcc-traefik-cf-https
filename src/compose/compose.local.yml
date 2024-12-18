@@ -1,7 +1,7 @@
 ---
 networks:
-  net-proxy:
-    name: net-proxy
+  proxy:
+    name: proxy
     driver: bridge
     external: true
   net-internal:
@@ -64,7 +64,7 @@ services:
         mode: host
     networks:
       - net-internal
-      - net-proxy
+      - proxy
     depends_on:
       - dockersocket
 
@@ -73,7 +73,7 @@ services:
   #   container_name: whoami
   #   networks:
   #     - net-internal
-  #     - net-proxy
+  #     - proxy
   #   depends_on:
   #     - traefik
   #   labels:
@@ -90,7 +90,7 @@ services:
   #     - no-new-privileges:true
   #   networks:
   #     - net-internal
-  #     - net-proxy
+  #     - proxy
   #   volumes:
   #     - /etc/localtime:/etc/localtime:ro
   #     - ${CURDIR}/.data/portainer:/data
