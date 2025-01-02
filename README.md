@@ -12,11 +12,13 @@ This guide shows you how to deploy your containers behind Traefik reverse-proxy.
 
 -   Docker Socket Proxy 1.26.2/latest
 -   Traefik 2.11.x, 3.1.x & 3.2.x
+-   Logger Alpine Linux 3.20 or 3.21
 
 ### Docker container:
 
 -   Docker Socket Proxy (security) - `Linuxserver.io` [Document](https://hub.docker.com/r/linuxserver/socket-proxy)
 -   Traefik [Document](https://hub.docker.com/_/traefik)
+-   Logger (logrotate & cron) `Custom of Alpine`
 -   Portainer (Optional) [Document](https://www.portainer.io/)
 
 ### Optional (development)
@@ -69,6 +71,7 @@ DOCKER_PROJECT_NAME=cf-proxy
 # Docker image version
 DOCKER_SOCKET_VERSION=latest
 TRAEFIK_VERSION=3.2
+ALPINE_VERSION=3.21
 
 # Timezone for os and log level
 TIMEZONE=Asia/Jakarta
