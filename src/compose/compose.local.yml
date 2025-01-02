@@ -68,6 +68,17 @@ services:
     depends_on:
       - dockersocket
 
+  logger:
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ${CURDIR}/.logs/traefik:/var/log/traefik
+    networks:
+      - net-internal
+    depends_on:
+      - traefik
+
   # whoami:
   #   image: traefik/whoami:latest
   #   container_name: whoami
